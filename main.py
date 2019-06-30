@@ -40,6 +40,8 @@ class ImageHelper():
         return image
 
 # Class declarations
+
+
 class SpriteViewer():
     def __init__(self, width=16, height=16):
         self.width = width
@@ -48,6 +50,8 @@ class SpriteViewer():
         self.images_rgb_data = []
         self.number_of_frames = 0
         self.current_frame = 0
+        self.duration = 0
+        self.totalTime = 0.
         return
 
     def load_image(self, filename):
@@ -61,13 +65,14 @@ class SpriteViewer():
     def image_as_array(self):
         return self._buffer
 
-    def next_frame(self, frame_number):
-        ENGINE_FPS = 60
-        GIF_FPS = 25
+    def update(self, dt):
 
-        if not ( frame_number % (ENGINE_FPS/GIF_FPS)):
-            self._buffer = self.images_rgb_data[self.current_frame % self.number_of_frames]
+        self.totalTime += dt
+        if(self.totalTime > self.duration):
             self.current_frame += 1
+            self.totalTime = 0
+        
+        self._buffer = self.images_rgb_data[self.current_frame % self.number_of_frames]
         return self._buffer
 
     def load_gif(self, filename, repetitions=1):
@@ -78,7 +83,7 @@ class SpriteViewer():
 
         try:
             # The time to display the current frame of the GIF, in milliseconds
-            duration = int(im.info["duration"])
+            self.duration = float(im.info["duration"]) / 1000
         except KeyError:
             print("{} has no duration meta data!".format(filename))
         except (TypeError, ValueError):
@@ -114,26 +119,31 @@ class RetroFrame():
     def mainloop(self):
         seed(1)
         image_folder = Path("images").absolute()
-        file_to_load = (r'F:\PC_BACKUP\Users\Jesper\Documents\GitHub\retro-frame\images\_1.gif') #image_folder / "_1.gif"
+        # image_folder / "_1.gif"
+        file_to_load = (r'F:\PC_BACKUP\Users\Jesper\Documents\GitHub\retro-frame\images\_1.gif')
         self.sprite.load_gif(file_to_load)
-        frame = 0
+        FPS = 60
+        lastFrameTime = time.time()
 
         while True:
-            self.display.buffer = self.sprite.next_frame(frame)
-            # Update your game objects and data structures here...
-            # for i in range(self.display.number_of_pixels):
-            #    self.display.set_pixel_at_index(
-            #        i, (randint(0, 255), randint(0, 255), randint(0, 255)))
+            # Calculate delta time
+            currentTime = time.time()
+            dt = currentTime - lastFrameTime
+            lastFrameTime = currentTime
 
-            # We draw everything from scratch on each frame.
+            # Update game logic, objects and data structures here using dt
+            self.display.buffer = self.sprite.update(dt)
+            
+            #for i in range(self.display.number_of_pixels):
+            #    self.display.set_pixel_at_index(i, (randint(0, 255), randint(0, 255), randint(0, 255)))
 
-            # Now the surface is ready, tell display to show it!
+            # Render the frame
             self.display.show()
 
-            # to limit CPU usage do not go faster than 60 "fps"
-            time.sleep(1/60)
-            frame += 1
-
+            # To limit CPU usage do not go faster than 60 "fps"
+            sleepTime = 1./FPS - dt
+            if sleepTime > 0:
+                time.sleep(sleepTime)
         return
 
 # Function declarations
