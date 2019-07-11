@@ -32,8 +32,6 @@ class SpriteSource(AbstractSource):
 
     def update(self, dt):
         self.totalTime += dt
-        print(self.current_frame)
-        print(self.totalTime)
         if(self.totalTime > self.duration):
             self.current_frame += 1
             self.totalTime = 0
