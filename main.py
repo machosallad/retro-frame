@@ -10,41 +10,99 @@ import sys
 import abc
 import numpy as np
 import time
+import requests
+from io import BytesIO
+from enum import Enum
 from random import seed
 from random import randint
 from PIL import Image
 from pathlib import Path
 from helpers import ImageHelper
+from animation_source import AnimationSource
+from image_source import ImageSource
+from sprite_source import SpriteSource
 
 # Global variables
+#HARDWARE = "WS2812B"
+HARDWARE = "COMPUTER"
+DISPLAY_WIDTH = 16
+DISPLAY_HEIGTH = 16
 FPS = 60
+SPRITE_DIRECTORY    =   '/retroframe/sprites/'
+IMAGE_DIRECTORY     =   '/retroframe/images/'
+ANIMATION_DIRECTORY =   '/retroframe/animations/'
+GIPHY_API_KEY = "dc6zaTOxFJmzC" # Giphy public beta API key
 
 # Class declarations
-class RetroFrame():
-    def __init__(self):
-        # Create surface of (width, height), and its window.
-        from computer import Computer
-        from animation_source import AnimationSource
-        from image_source import ImageSource
-        from sprite_source import SpriteSource
-        
-        # Working directories
-        image_source = os.path.join(os.path.dirname(__file__),'/retroframe/images/')
-        gif_to_load = os.path.join(image_source,'_1.gif')
-        image_to_load = os.path.join(image_source,'1.png')
-        sprite_to_load = os.path.join(image_source,'sprite_mario.png')
-        mario_sprite = os.path.join(image_source,'characters.gif')
+class Source(Enum):
+    animation = 1
+    image = 2
+    sprite = 3
+    clock = 4
 
-        self.display = Computer(16, 16)
-        self.image = ImageSource(image_to_load, 16, 16)
-        self.animation = AnimationSource(gif_to_load, 16, 16)
-        self.sprite = SpriteSource(sprite_to_load, 233, 99, 16, 16, 5, 0.2, 1, 1)
-        self.goomba = SpriteSource(mario_sprite, 296, 187, 16, 16, 2, 0.2, 3, 3)
+class RetroFrame():
+
+    def load_giphy_animations(self,count,tag):
+        """Requests a random gif"""
+        for x in range(count):
+            r = requests.get("http://api.giphy.com/v1/gifs/random?api_key={0}&tag={1}".format(GIPHY_API_KEY,tag))
+            try:
+                random_gif_url = r.json()["data"]["images"]["fixed_height_small"]["url"]
+                print(random_gif_url)
+                resp = requests.get(random_gif_url)
+                self.sources.append(AnimationSource(BytesIO(resp.content)))
+            except:
+                pass
+
+    def load_images(self,dirpath):
+        with os.scandir(dirpath) as entries:
+            for entry in entries:
+                if entry.is_file():
+                    self.sources.append(ImageSource(os.path.join(dirpath,entry.name), DISPLAY_WIDTH, DISPLAY_HEIGTH))
+
+    def load_animations(self, dirpath):
+        with os.scandir(dirpath) as entries:
+            for entry in entries:
+                if entry.is_file():
+                    self.sources.append(AnimationSource(os.path.join(dirpath,entry.name), DISPLAY_WIDTH, DISPLAY_HEIGTH))
+
+    def load_sprites(self, dirpath):
+        self.sprite = SpriteSource(os.path.join(dirpath,"sprite_mario.png"), 233, 99, 16, 16, 5, 0.2, 1, 1)
+        self.sources.append(self.sprite)
+
+        self.goomba = SpriteSource(os.path.join(dirpath,"characters.gif"), 296, 187, 16, 16, 2, 0.2, 3, 3)
+        self.sources.append(self.goomba)
+
+    def __init__(self):
+
+        # Create surface of (width, height), and its window.
+        if HARDWARE == 'WS2812B':
+            pass
+        elif HARDWARE == 'COMPUTER':
+            from computer import Computer
+            self.display = Computer(DISPLAY_WIDTH, DISPLAY_HEIGTH)
+        else:
+            raise RuntimeError(
+                "Display hardware \"{}\" not known.".format(HARDWARE))
+
+        self.sources = []
+
+        # Working directories
+        sprite_dir = os.path.join(os.path.dirname(__file__),SPRITE_DIRECTORY)
+        image_dir = os.path.join(os.path.dirname(__file__),IMAGE_DIRECTORY)
+        animation_dir = os.path.join(os.path.dirname(__file__),ANIMATION_DIRECTORY)
+        
         # Set up some data
+        self.load_giphy_animations(10,"pixelart")
+        #self.load_images(image_dir)
+        #self.load_animations(animation_dir)
+        #self.load_sprites(sprite_dir)
 
     def mainloop(self):
         lastFrameTime = time.time()
-
+        lastSourceChange = time.time()
+        sourceCounter = 0
+       
         while True:
             # Calculate delta time
             currentTime = time.time()
@@ -52,14 +110,20 @@ class RetroFrame():
             lastFrameTime = currentTime
 
             # Update game logic, objects and data structures here using dt
-            self.sprite.update(dt)
-            self.animation.update(dt)
-            self.image.update(dt)
-            self.goomba.update(dt)
-            self.display.buffer = self.goomba.buffer
+            for source in self.sources:
+                source.update(dt)
+
+            # Check if new source should be selected
+            if (time.time() - lastSourceChange > 3):
+                lastSourceChange = time.time()
+                sourceCounter += 1
+                if sourceCounter >= self.sources.__len__():
+                    sourceCounter = 0
             
-            #for i in range(self.display.number_of_pixels):
-            #    self.display.set_pixel_at_index(i, (randint(0, 255), randint(0, 255), randint(0, 255)))
+            current_source_buffer = self.sources[sourceCounter].buffer
+
+            # Update the display buffer
+            self.display.buffer = current_source_buffer
 
             # Render the frame
             self.display.show()
