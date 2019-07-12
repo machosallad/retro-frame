@@ -21,6 +21,7 @@ from helpers import ImageHelper
 from animation_source import AnimationSource
 from image_source import ImageSource
 from sprite_source import SpriteSource
+from video_source import VideoSource
 
 # Global variables
 #HARDWARE = "WS2812B"
@@ -91,9 +92,11 @@ class RetroFrame():
         sprite_dir = os.path.join(os.path.dirname(__file__),SPRITE_DIRECTORY)
         image_dir = os.path.join(os.path.dirname(__file__),IMAGE_DIRECTORY)
         animation_dir = os.path.join(os.path.dirname(__file__),ANIMATION_DIRECTORY)
+
+        self.video_source = VideoSource("/Users/jespermelin/Downloads/big_buck_bunny_720p_5mb.mp4")
         
         # Set up some data
-        self.load_giphy_animations(10,"pixelart")
+        #self.load_giphy_animations(10,"pixelart")
         #self.load_images(image_dir)
         #self.load_animations(animation_dir)
         #self.load_sprites(sprite_dir)
@@ -113,6 +116,8 @@ class RetroFrame():
             for source in self.sources:
                 source.update(dt)
 
+            self.video_source.update(dt)
+
             # Check if new source should be selected
             if (time.time() - lastSourceChange > 3):
                 lastSourceChange = time.time()
@@ -120,10 +125,10 @@ class RetroFrame():
                 if sourceCounter >= self.sources.__len__():
                     sourceCounter = 0
             
-            current_source_buffer = self.sources[sourceCounter].buffer
+            #current_source_buffer = self.sources[sourceCounter].buffer
 
             # Update the display buffer
-            self.display.buffer = current_source_buffer
+            self.display.buffer = self.video_source.buffer
 
             # Render the frame
             self.display.show()
