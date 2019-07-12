@@ -11,6 +11,8 @@ import abc
 import numpy as np
 import time
 import requests
+import pafy
+import youtube_dl
 from io import BytesIO
 from enum import Enum
 from random import seed
@@ -32,6 +34,7 @@ FPS = 60
 SPRITE_DIRECTORY    =   '/retroframe/sprites/'
 IMAGE_DIRECTORY     =   '/retroframe/images/'
 ANIMATION_DIRECTORY =   '/retroframe/animations/'
+VIDEO_DIRECTORY     =   '/retroframe/videos/'
 GIPHY_API_KEY = "dc6zaTOxFJmzC" # Giphy public beta API key
 
 # Class declarations
@@ -74,6 +77,22 @@ class RetroFrame():
         self.goomba = SpriteSource(os.path.join(dirpath,"characters.gif"), 296, 187, 16, 16, 2, 0.2, 3, 3)
         self.sources.append(self.goomba)
 
+    def load_videos(self,dirpath):
+        with os.scandir(dirpath) as entries:
+            for entry in entries:
+                if entry.is_file():
+                    self.sources.append(VideoSource(os.path.join(dirpath,entry.name), DISPLAY_WIDTH, DISPLAY_HEIGTH))    
+
+    def load_youtube_videos(self):
+        urls = ["https://www.youtube.com/watch?v=7yeA7a0uS3A",
+        "https://www.youtube.com/watch?v=AxuvUAjHYWQ", 
+        "https://www.youtube.com/watch?v=Ae-Pl-Q34ng"]
+
+        for url in urls:
+            vPafy = pafy.new(url)
+            play = vPafy.getbest(preftype="webm")
+            self.sources.append(VideoSource(play.url))
+
     def __init__(self):
 
         # Create surface of (width, height), and its window.
@@ -92,14 +111,16 @@ class RetroFrame():
         sprite_dir = os.path.join(os.path.dirname(__file__),SPRITE_DIRECTORY)
         image_dir = os.path.join(os.path.dirname(__file__),IMAGE_DIRECTORY)
         animation_dir = os.path.join(os.path.dirname(__file__),ANIMATION_DIRECTORY)
-
-        self.video_source = VideoSource("/Users/jespermelin/Downloads/big_buck_bunny_720p_5mb.mp4")
-        
+        video_dir = os.path.join(os.path.dirname(__file__),VIDEO_DIRECTORY)
+                
         # Set up some data
         #self.load_giphy_animations(10,"pixelart")
         #self.load_images(image_dir)
         #self.load_animations(animation_dir)
         #self.load_sprites(sprite_dir)
+        #self.load_videos(video_dir)
+        self.load_youtube_videos()
+
 
     def mainloop(self):
         lastFrameTime = time.time()
@@ -116,19 +137,17 @@ class RetroFrame():
             for source in self.sources:
                 source.update(dt)
 
-            self.video_source.update(dt)
-
             # Check if new source should be selected
-            if (time.time() - lastSourceChange > 3):
+            if (time.time() - lastSourceChange > 5):
                 lastSourceChange = time.time()
                 sourceCounter += 1
                 if sourceCounter >= self.sources.__len__():
                     sourceCounter = 0
             
-            #current_source_buffer = self.sources[sourceCounter].buffer
+            current_source_buffer = self.sources[sourceCounter].buffer
 
             # Update the display buffer
-            self.display.buffer = self.video_source.buffer
+            self.display.buffer = current_source_buffer
 
             # Render the frame
             self.display.show()
