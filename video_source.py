@@ -43,7 +43,7 @@ class VideoSource(AbstractSource):
             # print i
             if i % 1 == 0:
                 frame = cv2.cvtColor(frame,cv2.COLOR_BGR2RGB)
-                frame = cv2.resize(frame, (16,16), interpolation = cv2.INTER_AREA )
+                frame = cv2.resize(frame, (self.width,self.height), interpolation = cv2.INTER_AREA )
                 self.video_frames.append(frame)
                 frame_counter += 1          
             read_flag, frame = video.read()
