@@ -33,21 +33,21 @@ class VideoSource(AbstractSource):
 
         print ("Frames per second : {0}".format(self.frame_rate))
 
-        # Start capturing the video frames
-        read_flag, frame = video.read()
-        i = 1
         frame_counter = 0
 
         start_time = time.time()
-        while (read_flag):
-            # print i
-            if i % 1 == 0:
-                frame = cv2.cvtColor(frame,cv2.COLOR_BGR2RGB)
-                frame = cv2.resize(frame, (self.width,self.height), interpolation = cv2.INTER_AREA )
-                self.video_frames.append(frame)
-                frame_counter += 1          
-            read_flag, frame = video.read()
-            i += 1
+        while (True):
+            # Start capturing the video frames
+            ret, frame = video.read()
+
+            if not ret:
+                break       
+
+            frame = cv2.cvtColor(frame,cv2.COLOR_BGR2RGB)
+            frame = cv2.resize(frame, (self.width,self.height), interpolation = cv2.INTER_AREA )
+            self.video_frames.append(frame)
+            frame_counter += 1
+                        
         video.release()
         stop_time = time.time()
         print("Elapsed time to capture video frames:{0}".format(stop_time-start_time))

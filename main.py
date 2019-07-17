@@ -104,6 +104,8 @@ class RetroFrame():
         
         # Create surface of (width, height), and its window.
         if HARDWARE == 'WS2812B':
+            from ws2812b import WS2812B
+            self.display = WS2812B(DISPLAY_WIDTH,DISPLAY_HEIGTH)
             pass
         elif HARDWARE == 'COMPUTER':
             from computer import Computer
