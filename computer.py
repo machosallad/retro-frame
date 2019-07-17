@@ -27,26 +27,17 @@ class Computer(AbstractDisplay):
             if event.type == pygame.QUIT:
                 pygame.quit()
                 sys.exit()
-
-        self.surface.fill((0, 0, 0))
-
-        it = np.nditer([self.buffer[:, :, 0],
-                        self.buffer[:, :, 1],
-                        self.buffer[:, :, 2]], flags=['multi_index'])
-        while not it.finished:
-            color = (it[0] * self.brightness, it[1] *
-                     self.brightness, it[2] * self.brightness)
-            (row, column) = it.multi_index
-            pygame.draw.rect(self.surface, color,
-                             [(self.margin + self.size) * column + self.margin,
-                              (self.margin + self.size) * row + self.margin,
-                              self.size,
-                              self.size])
-            it.iternext()
-
+       
+        for j in range (self.width):
+            for i in range(self.height):
+                color = self.buffer[i][j]
+                pygame.draw.rect(self.surface, color,[(self.margin + self.size) * j + self.margin,
+                            (self.margin + self.size) * i + self.margin,
+                            self.size,
+                            self.size])
         pygame.display.update()
-        return
 
+        return
 
 if __name__ == "__main__":
     display = Computer()
