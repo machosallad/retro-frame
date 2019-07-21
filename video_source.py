@@ -6,7 +6,7 @@ import cv2
 import numpy as np
 from PIL import Image
 from helpers import ImageHelper
-from abstract_source import AbstractSource
+from abstract_source import AbstractSource, SourceType
 
 class VideoSource(AbstractSource):
     def __init__(self, filename, width=16, height=16):
@@ -17,6 +17,7 @@ class VideoSource(AbstractSource):
         self.total_time = 0
         self.video_frames = []
         self.frame_rate = 0
+        self._type = SourceType.video
         self.load(filename)
 
     def load(self, filename):

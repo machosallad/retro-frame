@@ -5,12 +5,12 @@ import time
 import numpy as np
 from PIL import Image
 from helpers import ImageHelper
-from abstract_source import AbstractSource
+from abstract_source import AbstractSource, SourceType
 
 class ImageSource(AbstractSource):
     def __init__(self, filename, width=16, height=16):
         super().__init__(width, height)
-
+        self._type = SourceType.image
         self.load(filename)
 
     def load(self, filename):

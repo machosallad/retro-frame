@@ -3,6 +3,14 @@
 import abc
 import numpy as np
 import time
+from enum import Enum
+
+class SourceType(Enum):
+    base = 0
+    animation = 1
+    image = 2
+    sprite = 3
+    video = 4
 
 class AbstractSource(abc.ABC):
     def __init__(self,width=16, height=16):
@@ -11,11 +19,17 @@ class AbstractSource(abc.ABC):
         self.number_of_pixels = self.height * self.width
         self._buffer = np.zeros((self.height, self.width, 3), dtype=np.uint8)
         self.totalTime = 0.
+        self._type = SourceType.base
     
     @property
     def buffer(self):
         """The buffer contains the rgb data representation of the source."""
         return self._buffer
+
+    @property
+    def type(self):
+        """ Source type"""
+        return self._type
 
     def clear_buffer(self):
         self._buffer = np.zeros_like(self._buffer)
