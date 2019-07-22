@@ -7,8 +7,8 @@ from enum import Enum
 
 class SourceType(Enum):
     base = 0
-    animation = 1
-    image = 2
+    image = 1
+    animation = 2
     sprite = 3
     video = 4
 
