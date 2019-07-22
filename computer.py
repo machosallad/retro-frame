@@ -30,7 +30,7 @@ class Computer(AbstractDisplay):
        
         for j in range (self.width):
             for i in range(self.height):
-                color = self.buffer[i][j]
+                color = self.buffer[i][j] * self.brightness
                 pygame.draw.rect(self.surface, color,[(self.margin + self.size) * j + self.margin,
                             (self.margin + self.size) * i + self.margin,
                             self.size,
