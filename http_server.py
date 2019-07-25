@@ -85,4 +85,4 @@ class RetroFrameHttpServer(threading.Thread):
                 else:
                     return 'Unsupported content-type', 400
 
-        app.run()
+        app.run(host="0.0.0.0",threaded=True)
