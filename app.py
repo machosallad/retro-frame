@@ -102,6 +102,7 @@ class RetroFrame():
     def rest_add_youtube_video_worker(self,url):
         vPafy = pafy.new(url)
         play = vPafy.getbest(preftype="webm")
+        if play is not None:
             self.sources.append(VideoSource(play.url,DISPLAY_WIDTH, DISPLAY_WIDTH))
 
     def rest_add_youtube_video(self,url):
@@ -137,10 +138,11 @@ class RetroFrame():
         self.mode = ViewMode.random
         self.allowed_content_dict = {SourceType.image:False, SourceType.video:True, SourceType.sprite:False, SourceType.animation:False}
 
-        from http_server import RetroFrameHttpServer, app
+        from http_server import RetroFrameHttpServer
         self.http_server = RetroFrameHttpServer(self,500)
-        self.http_server_thread = threading.Thread(target=self.http_server.serve_forever,daemon=True)
-        self.http_server_thread.start()
+        self.http_server.setDaemon(True)
+        self.http_server.start()
+
 
     def load_default_resources(self):
         """ Load all resources which should always be used by the application."""

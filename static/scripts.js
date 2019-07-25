@@ -1,5 +1,22 @@
 $(document).ready(function(){
-    // click on button submit
+
+    //$(".alert").hide()
+
+    // Load "stuff"
+    $.ajax({
+        url: 'api/v1/display/brightness', // url where to submit the request
+        type : "GET", // type of action POST || GET
+        dataType : 'json',
+        success : function(data) {
+            console.log(data);
+            $('#displayBrightness').val(data.level)
+        },
+        error: function(xhr, resp, text) {
+            console.log(xhr, resp, text);
+        }
+    })
+    
+    // Submit of brightness
     $("#brightness-submit").on('click', function(){
         // send ajax
         var value = parseFloat($('#displayBrightness').val())
@@ -19,9 +36,9 @@ $(document).ready(function(){
         })
     });
 
+    // Submit Youtube video
     $("#youtube-submit").on('click', function(){
         // send ajax
-        console.log("Button pressed for youtube!")
         var value = $('#addYouTube').val()
         var formData = JSON.stringify( { "url": value} )
         console.log(formData)
@@ -31,9 +48,11 @@ $(document).ready(function(){
             contentType: 'application/json;charset=UTF-8',
             data : formData,
             success : function(result) {
+                alert("Success! Hang on tight, loading may take a while...")
                 console.log(result);
             },
             error: function(xhr, resp, text) {
+                alert("Failure! Failed to load provided video, please try again...")
                 console.log(xhr, resp, text);
             }
         })
