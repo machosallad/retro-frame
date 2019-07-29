@@ -115,6 +115,11 @@ class RetroFrame():
                 worker_thread.start()
                 return True
 
+    def rest_add_giphy_video(self,tag, count):
+        worker_thread = threading.Thread(target=self.load_giphy_animations,args=(count,tag,))
+        worker_thread.start()
+        return True
+
     def __init__(self):
         # Change working directory
         os.chdir(os.path.dirname(os.path.abspath(__file__)))
@@ -152,10 +157,7 @@ class RetroFrame():
         #self.load_sprites(SPRITE_DIRECTORY)
         
         # Create loader threads the heavier resources
-        urls = ["https://www.youtube.com/watch?v=AxuvUAjHYWQ", "https://www.youtube.com/watch?v=Ae-Pl-Q34ng"]
-        #self.load_threads.append(threading.Thread(target=self.load_youtube_videos,args=(urls,)))
-        #self.load_threads.append(threading.Thread(target=self.load_videos,args=(VIDEO_DIRECTORY,)))
-        #self.load_threads.append(threading.Thread(target=self.load_giphy_animations,args=(10,"nes")))
+        self.load_threads.append(threading.Thread(target=self.load_videos,args=(VIDEO_DIRECTORY,)))
 
         # Start all the threads in one go
         for thread in self.load_threads:
@@ -226,14 +228,18 @@ class RetroFrame():
     def set_content_allowence(self,type_as_string,status):
         if type_as_string == "image":
             self.allowed_content_dict[SourceType.image] = status
+            return True
         elif type_as_string == "animation":
             self.allowed_content_dict[SourceType.animation] = status
+            return True
         elif type_as_string == "sprite":
             self.allowed_content_dict[SourceType.sprite] = status
+            return True
         elif type_as_string == "video":
             self.allowed_content_dict[SourceType.video] = status
+            return True
         else:
-            pass
+            return False
 
     def get_content_allowance(self,type_as_string):
         if type_as_string == "image":

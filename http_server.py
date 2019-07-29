@@ -52,14 +52,9 @@ class RetroFrameHttpServer(threading.Thread):
         @app.route('/api/v1/settings/mode', methods = ['GET', 'PUT', 'PATCH'])
         def mode():
             if request.method == 'GET':
-                return jsonify(length=self.app_handle.view_length)
+                return 'Unsupported', 400
             elif request.method == 'PUT' or request.method == 'PATCH':
-                if request.is_json:
-                    content = request.get_json()
-                    self.app_handle.view_length = content['length']
-                    return jsonify(length=self.app_handle.view_length)
-                else:
-                    return 'Unsupported content-type', 400
+                return 'Unsupported', 400
 
         @app.route('/api/v1/sources/<type>/status', methods = ['GET', 'PUT', 'PATCH'])
         def source_status(type):
@@ -68,8 +63,10 @@ class RetroFrameHttpServer(threading.Thread):
             elif request.method == 'PUT' or request.method == 'PATCH':
                 if request.is_json:
                     content = request.get_json()
-                    self.app_handle.set_content_allowence(type,content['status'])
-                    return jsonify(status=self.app_handle.get_content_allowance(type))
+                    if self.app_handle.set_content_allowence(type,content['status']):
+                        return jsonify(status=self.app_handle.get_content_allowance(type))
+                    else:
+                        'Failed to set status', 500
                 else:
                     return 'Unsupported content-type', 400
 
@@ -79,6 +76,18 @@ class RetroFrameHttpServer(threading.Thread):
                 if request.is_json:
                     content = request.get_json()
                     if self.app_handle.rest_add_youtube_video(content['url']):
+                        return 'Content started to load', 200
+                    else:
+                        return 'Failed to load content', 500
+                else:
+                    return 'Unsupported content-type', 400
+
+        @app.route('/api/v1/sources/giphy/random', methods = ['PUT', 'PATCH'])
+        def source_giphy():
+            if request.method == 'PUT' or request.method == 'PATCH':
+                if request.is_json:
+                    content = request.get_json()
+                    if self.app_handle.rest_add_giphy_video(content['tag'], content['count']):
                         return 'Content started to load', 200
                     else:
                         return 'Failed to load content', 500
