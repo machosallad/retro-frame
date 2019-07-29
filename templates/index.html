@@ -51,18 +51,30 @@
       <div id="menu2" class="tab-pane fade" role="tabpanel">
         <h2>Sources</h2>
         <h3>Enable content</h3>
-        <div class="form-check">
-          <input class="form-check-input" type="checkbox" value="" id="imagesCheck">
-          <label class="form-check-label" for="imagesCheck">Images</label>
-        </div>
-        <div class="form-check">
-          <input class="form-check-input" type="checkbox" value="" id="animationsCheck">
-          <label class="form-check-label" for="animationsCheck">Animations</label>
-        </div>
-        <div class="form-check">
-          <input class="form-check-input" type="checkbox" value="" id="videosCheck">
-          <label class="form-check-label" for="videosCheck">Videos</label>
-        </div>
+        <p>Select which content that is allowed to be visible.</p>
+        <form>
+          <div class="custom-control custom-checkbox">
+            <input class="custom-control-input" type="checkbox" value="" id="imagesCheck">
+            <label class="custom-control-label" for="imagesCheck">Images</label>
+          </div>
+          <div class="custom-control custom-checkbox">
+            <input class="custom-control-input" type="checkbox" value="" id="animationsCheck">
+            <label class="custom-control-label" for="animationsCheck">Animations</label>
+          </div>
+          <div class="custom-control custom-checkbox">
+            <input class="custom-control-input" type="checkbox" value="" id="videosCheck">
+            <label class="custom-control-label" for="videosCheck">Videos</label>
+          </div>
+          <div class="custom-control custom-checkbox">
+            <input class="custom-control-input" type="checkbox" value="" id="giphyCheck">
+            <label class="custom-control-label" for="giphyCheck">Giphy</label>
+          </div>
+          <div class="custom-control custom-checkbox">
+            <input class="custom-control-input" type="checkbox" value="" id="youtubeCheck">
+            <label class="custom-control-label" for="youtubeCheck">YouTube</label>
+          </div>
+          <button type="button" id="enable-content-submit" class="btn btn-primary mb-2">Update filter</button>
+        </form>
 
         <h3>Display mode</h3>
         <div class="form-check">
