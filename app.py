@@ -29,8 +29,6 @@ from video_source import VideoSource
 from abstract_source import SourceType
 
 # Global variables
-#HARDWARE = "WS2812B"
-HARDWARE = "COMPUTER"
 DISPLAY_WIDTH = 16
 DISPLAY_HEIGTH = 16
 FPS = 60
@@ -125,16 +123,13 @@ class RetroFrame():
         os.chdir(os.path.dirname(os.path.abspath(__file__)))
         
         # Create surface of (width, height), and its window.
-        if HARDWARE == 'WS2812B':
+        if os.uname()[1] == 'raspberrypi':
             from ws2812b import WS2812B
             self.display = WS2812B(DISPLAY_WIDTH,DISPLAY_HEIGTH)
             pass
-        elif HARDWARE == 'COMPUTER':
+        else:
             from computer import Computer
             self.display = Computer(DISPLAY_WIDTH, DISPLAY_HEIGTH)
-        else:
-            raise RuntimeError(
-                "Display hardware \"{}\" not known.".format(HARDWARE))
 
         self.source_index = 0
         self.sources = []
