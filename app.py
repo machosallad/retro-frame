@@ -14,6 +14,7 @@ import requests
 import pafy
 import youtube_dl
 import threading
+import random
 from io import BytesIO
 from enum import Enum
 from random import seed
@@ -25,10 +26,9 @@ from animation_source import AnimationSource
 from image_source import ImageSource
 from sprite_source import SpriteSource
 from video_source import VideoSource
+from abstract_source import SourceType
 
 # Global variables
-#HARDWARE = "WS2812B"
-HARDWARE = "COMPUTER"
 DISPLAY_WIDTH = 16
 DISPLAY_HEIGTH = 16
 FPS = 60
@@ -40,13 +40,11 @@ WAIT_ANIMATION      =   "resources/loading.gif"
 GIPHY_API_KEY = "dc6zaTOxFJmzC" # Giphy public beta API key
 
 # Class declarations
-class Source(Enum):
-    random = 0
-    animation = 1
-    image = 2
-    sprite = 3
-    video = 4
-    clock = 5
+class ViewMode(Enum):
+    order = 0
+    random = 1
+    static = 2
+    shuffle = 3
 
 class RetroFrame():
 
@@ -96,39 +94,65 @@ class RetroFrame():
         for url in urls:
             vPafy = pafy.new(url)
             play = vPafy.getbest(preftype="webm")
+            if play is not None:
+                self.sources.append(VideoSource(play.url,DISPLAY_WIDTH, DISPLAY_WIDTH))
+
+    def rest_add_youtube_video_worker(self,url):
+        vPafy = pafy.new(url)
+        play = vPafy.getbest(preftype="webm")
+        if play is not None:
             self.sources.append(VideoSource(play.url,DISPLAY_WIDTH, DISPLAY_WIDTH))
+
+    def rest_add_youtube_video(self,url):
+            vPafy = pafy.new(url)
+            play = vPafy.getbest(preftype="webm")
+            if play is None:
+                return False
+            else:
+                worker_thread = threading.Thread(target=self.rest_add_youtube_video_worker,args=(url,))
+                worker_thread.start()
+                return True
+
+    def rest_add_giphy_video(self,tag, count):
+        worker_thread = threading.Thread(target=self.load_giphy_animations,args=(count,tag,))
+        worker_thread.start()
+        return True
 
     def __init__(self):
         # Change working directory
         os.chdir(os.path.dirname(os.path.abspath(__file__)))
         
         # Create surface of (width, height), and its window.
-        if HARDWARE == 'WS2812B':
+        if os.uname()[1] == 'raspberrypi':
             from ws2812b import WS2812B
             self.display = WS2812B(DISPLAY_WIDTH,DISPLAY_HEIGTH)
             pass
-        elif HARDWARE == 'COMPUTER':
+        else:
             from computer import Computer
             self.display = Computer(DISPLAY_WIDTH, DISPLAY_HEIGTH)
-        else:
-            raise RuntimeError(
-                "Display hardware \"{}\" not known.".format(HARDWARE))
 
+        self.source_index = 0
         self.sources = []
         self.load_threads = []
+        self.view_length = 5
+        self.mode = ViewMode.random
+        self.allowed_content_dict = {SourceType.image:False, SourceType.video:True, SourceType.sprite:False, SourceType.animation:False}
+
+        from http_server import RetroFrameHttpServer
+        self.http_server = RetroFrameHttpServer(self,500)
+        self.http_server.setDaemon(True)
+        self.http_server.start()
+
 
     def load_default_resources(self):
         """ Load all resources which should always be used by the application."""
         # Set up some data
         self.load_images(IMAGE_DIRECTORY)
         self.load_animations(ANIMATION_DIRECTORY)
-        self.load_sprites(SPRITE_DIRECTORY)
+        #self.load_sprites(SPRITE_DIRECTORY)
         
         # Create loader threads the heavier resources
-        urls = ["https://www.youtube.com/watch?v=AxuvUAjHYWQ", "https://www.youtube.com/watch?v=Ae-Pl-Q34ng"]
-        self.load_threads.append(threading.Thread(target=self.load_youtube_videos,args=(urls,)))
         self.load_threads.append(threading.Thread(target=self.load_videos,args=(VIDEO_DIRECTORY,)))
-        self.load_threads.append(threading.Thread(target=self.load_giphy_animations,args=(10,"pixelart")))
 
         # Start all the threads in one go
         for thread in self.load_threads:
@@ -136,7 +160,6 @@ class RetroFrame():
 
     def mainloop(self):
         # Setup local variables
-        sourceCounter = 0
         wait_animation = AnimationSource(WAIT_ANIMATION)
 
         # Prepare and start loading resources
@@ -157,14 +180,12 @@ class RetroFrame():
                     source.update(dt)
                 
                 # Check if new source should be selected
-                if (time.time() - lastSourceChange > 5):
+                if (time.time() - lastSourceChange > self.view_length):
                     lastSourceChange = time.time()
-                    sourceCounter += 1
-                    if sourceCounter >= self.sources.__len__():
-                        sourceCounter = 0
+                    self.source_index = self.get_next_source_index()
 
                 # Update the display buffer
-                self.display.buffer = self.sources[sourceCounter].buffer
+                self.display.buffer = self.sources[self.source_index].buffer
             else:
                 # Show waiting animation
                 wait_animation.update(dt)
@@ -179,6 +200,54 @@ class RetroFrame():
                 time.sleep(sleepTime)
         return
 
+    def get_next_source_index(self):
+        next_index = self.source_index + 1
+        # First check if we are beyond the list or not
+        if next_index >= self.sources.__len__():
+            next_index = 0
+
+        # Check if next is allowed
+        while True:
+            if self.source_index == next_index:
+                break 
+            elif self.allowed_content_dict[self.sources[next_index].type]:
+                return next_index
+            else:
+                next_index += 1
+                if next_index >= self.sources.__len__():
+                    next_index = 0
+
+        return self.source_index
+
+
+    def set_content_allowence(self,type_as_string,status):
+        if type_as_string == "image":
+            self.allowed_content_dict[SourceType.image] = status
+            return True
+        elif type_as_string == "animation":
+            self.allowed_content_dict[SourceType.animation] = status
+            return True
+        elif type_as_string == "sprite":
+            self.allowed_content_dict[SourceType.sprite] = status
+            return True
+        elif type_as_string == "video":
+            self.allowed_content_dict[SourceType.video] = status
+            return True
+        else:
+            return False
+
+    def get_content_allowance(self,type_as_string):
+        if type_as_string == "image":
+            return self.allowed_content_dict[SourceType.image]
+        elif type_as_string == "animation":
+            return self.allowed_content_dict[SourceType.animation]
+        elif type_as_string == "sprite":
+            return self.allowed_content_dict[SourceType.sprite]
+        elif type_as_string == "video":
+            return self.allowed_content_dict[SourceType.video]
+        else:
+            return False
+ 
     def all_resources_loaded(self):
         """ Verify if all resources are fully loaded"""
         all_sources_ready = True

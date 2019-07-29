@@ -5,7 +5,7 @@ import time
 import numpy as np
 from PIL import Image
 from helpers import ImageHelper
-from abstract_source import AbstractSource
+from abstract_source import AbstractSource, SourceType
 
 class AnimationSource(AbstractSource):
     def __init__(self,filename, width=16, height=16):
@@ -14,6 +14,7 @@ class AnimationSource(AbstractSource):
         self.number_of_frames = 0
         self.current_frame = 0
         self.duration = []
+        self._type = SourceType.animation
 
         self.load(filename)
 

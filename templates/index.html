@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Retro Frame Dashboard">
+  <meta name="author" content="Jesper Melin ">
+  <title>Retro Frame Dashboard</title>
+  <!--
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+  -->
+  <link href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet"
+    integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
+  <link href="https://stackpath.bootstrapcdn.com/bootswatch/4.3.1/darkly/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-w+8Gqjk9Cuo6XH9HKHG5t5I1VR4YBNdPt/29vwgfZR485eoEJZ8rJRbm3TR32P6k" crossorigin="anonymous">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.0/umd/popper.min.js"></script>
+</head>
+
+<body>
+  <div class="container">
+    <h1>Retro Frame Dashboard</h1>
+    <p class="lead">Welcome to the Retro Frame Dashboard.<br>This page allows you to control several aspects of the
+      frame.</p>
+
+    <ul class="nav nav-tabs role=" tablist">
+      <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#display" role="tab"><i
+            class="fa fa-wrench fa-2x"></i></a></li>
+      <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#menu2" role="tab"><i
+            class="fa fa-film fa-2x"></i></a></li>
+      <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#menu3" role="tab"><i
+            class="fa fa-plus fa-2x"></i></a></li>
+    </ul>
+
+    <div class="tab-content">
+      <div id="display" class="tab-pane fade" role="tabpanel">
+        <h2>Display</h2>
+        <p>Information regarding the used display and adjustment of display settings.</p>
+        <form id="brightness-form">
+          <div class="form-group">
+            <label for="displayBrightness">Brightness <i class="fa fa-sun-o"></i></label>
+            <input type="range" min="0.0" max="1.0" step="0.02" value="0.5" class="custom-range" id="displayBrightness"
+              placeholder="pixelart" name="level">
+          </div>
+          <button type="button" class="btn btn-primary mb-2" id="brightness-submit">Update brightness</button>
+        </form>
+      </div>
+
+      <div id="menu2" class="tab-pane fade" role="tabpanel">
+        <h2>Sources</h2>
+        <h3>Enable content</h3>
+        <div class="form-check">
+          <input class="form-check-input" type="checkbox" value="" id="imagesCheck">
+          <label class="form-check-label" for="imagesCheck">Images</label>
+        </div>
+        <div class="form-check">
+          <input class="form-check-input" type="checkbox" value="" id="animationsCheck">
+          <label class="form-check-label" for="animationsCheck">Animations</label>
+        </div>
+        <div class="form-check">
+          <input class="form-check-input" type="checkbox" value="" id="videosCheck">
+          <label class="form-check-label" for="videosCheck">Videos</label>
+        </div>
+
+        <h3>Display mode</h3>
+        <div class="form-check">
+          <input class="form-check-input" type="radio" value="" id="orderRadio">
+          <label class="form-check-label" for="orderRadio">Ordered</label>
+        </div>
+        <div class="form-check">
+          <input class="form-check-input" type="radio" value="" id="randomRadio">
+          <label class="form-check-label" for="randomRadio">Random</label>
+        </div>
+        <div class="form-check">
+          <input class="form-check-input" type="radio" value="" id="staticRadio">
+          <label class="form-check-label" for="staticRadio">Static</label>
+        </div>
+      </div>
+
+      <div id="menu3" class="tab-pane fade" role="tabpanel">
+        <h2>New Content</h2>
+        <div class="container">
+          <div class="row">
+            <div class="col">
+              <h3>Giphy</h3>
+              <p>Add random animations from Giphy.com</p>
+              <form>
+                <div class="form-row">
+                  <div class="form-group col-md-6">
+                    <label for="giphyNumberOfItems">Number of items</label>
+                    <input type="number" class="form-control" id="giphyCount" placeholder="5">
+                  </div>
+                  <div class="form-group col-md-6">
+                    <label for="giphyTag">Tag</label>
+                    <input type="text" class="form-control" id="giphyTag" placeholder="pixelart">
+                  </div>
+                  <button type="button" id="giphy-submit" class="btn btn-primary mb-2">Submit</button>
+                </div>
+              </form>
+            </div>
+            <div class="col">
+              <h3>YouTube</h3>
+              <p>Add a new video from YouTube.com</p>
+              <form>
+                <div class="form-group">
+                  <label for="addYouTube">YouTube video url</label>
+                  <input type="text" class="form-control" id="addYouTube"
+                    placeholder="https://www.youtube.com/watch?v=dQw4w9WgXcQ">
+                </div>
+                <button type="button" id="youtube-submit" class="btn btn-primary mb-2">Submit</button>
+              </form>
+            </div>
+          </div> <!-- END first row-->
+          <div class="row">
+            <div class="col">
+              <h3>Videos</h3>
+              <form>
+                <div class="form-group">
+                  <label for="uploadVideoForm">Upload a video to the frame</label>
+                  <input type="file" class="form-control-file" id="uploadVideoForm">
+                </div>
+                <button type="submit" class="btn btn-primary mb-2">Upload</button>
+              </form>
+            </div>
+            <div class="col">
+              <h3>Images</h3>
+              <form>
+                <div class="form-group">
+                  <label for="uploadImageForm">Upload an image to the frame</label>
+                  <input type="file" class="form-control-file" id="uploadImageForm">
+                </div>
+                <button type="submit" class="btn btn-primary mb-2">Upload</button>
+              </form>
+            </div>
+
+          </div> <!-- END second row-->
+        </div> <!-- END content grid-->
+      </div> <!-- END add content tab-->
+
+
+    </div>
+  </div>
+
+  <!-- scripts -->
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+    integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+    crossorigin="anonymous"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.bundle.min.js"
+    integrity="sha384-xrRywqdh3PHs8keKZN+8zzc5TX0GRTLCcmivcbNJWm2rs5C8PRhcEn3czEjhAO9o"
+    crossorigin="anonymous"></script>
+  <script type="text/javascript" src="{{ url_for('static', filename='scripts.js') }}"></script>
+</body>
+
+</html>

@@ -11,13 +11,14 @@ LED_PIN        = 18      # GPIO pin connected to the pixels (18 uses PWM!).
 #LED_PIN        = 10      # GPIO pin connected to the pixels (10 uses SPI /dev/spidev0.0).
 LED_FREQ_HZ    = 800000  # LED signal frequency in hertz (usually 800khz)
 LED_DMA        = 10      # DMA channel to use for generating signal (try 10)
-LED_BRIGHTNESS = 10     # Set to 0 for darkest and 255 for brightest
+LED_BRIGHTNESS = 64     # Set to 0 for darkest and 255 for brightest
 LED_INVERT     = False   # True to invert the signal (when using NPN transistor level shift)
 LED_CHANNEL    = 0       # set to '1' for GPIOs 13, 19, 41, 45 or 53
 
 class WS2812B(AbstractDisplay):
     def __init__(self, width=16, height=16):
         super().__init__(width, height)
+        self._brightness = 0.3
 
         # Create NeoPixel object with appropriate configuration.
         self.strip = Adafruit_NeoPixel(LED_COUNT, LED_PIN, LED_FREQ_HZ, LED_DMA, LED_INVERT, LED_BRIGHTNESS, LED_CHANNEL, ws.WS2811_STRIP_GRB)
@@ -34,6 +35,8 @@ class WS2812B(AbstractDisplay):
                 index = self.get_led_index(i,j)
                 self.strip.setPixelColor(index,color)
 
+        brightness = int(LED_BRIGHTNESS*self._brightness)
+        self.strip.setBrightness(brightness)
         self.strip.show()
         return
 

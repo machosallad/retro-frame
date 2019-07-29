@@ -5,7 +5,7 @@ import time
 import numpy as np
 from PIL import Image
 from helpers import ImageHelper
-from abstract_source import AbstractSource
+from abstract_source import AbstractSource, SourceType
 
 class SpriteSource(AbstractSource):
     def __init__(self, filename, x, y, dx, dy, count, duration, dx_offset=0, dy_offset=0, width=16, height=16):
@@ -15,6 +15,7 @@ class SpriteSource(AbstractSource):
         self.images_rgb_data = []
         self.number_of_frames = count
         self.current_frame = 0
+        self._type = SourceType.sprite
 
         self.load(filename, x, y, dx, dy, count, dx_offset, dy_offset)
 
