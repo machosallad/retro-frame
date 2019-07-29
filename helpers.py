@@ -25,5 +25,5 @@ class ImageHelper():
     @staticmethod
     def resize_image(image, size):
         if image.size != size:
-            image = image.resize(size)
+            image = image.resize(size, Image.BICUBIC)
         return image
