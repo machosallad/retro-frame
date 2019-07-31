@@ -57,7 +57,7 @@ class RetroFrame():
                 random_gif_url = r.json()["data"]["images"]["fixed_height_small"]["url"]
                 print(random_gif_url)
                 resp = requests.get(random_gif_url)
-                self.sources.append(AnimationSource(BytesIO(resp.content)))
+                self.sources.append(AnimationSource(filename=BytesIO(resp.content),type=SourceType.giphy))
             except:
                 pass
 
@@ -96,13 +96,10 @@ class RetroFrame():
             vPafy = pafy.new(url)
             play = vPafy.getbest(preftype="webm")
             if play is not None:
-                self.sources.append(VideoSource(play.url,DISPLAY_WIDTH, DISPLAY_WIDTH))
+                self.sources.append(VideoSource(play.url,DISPLAY_WIDTH, DISPLAY_HEIGTH))
 
     def rest_add_youtube_video_worker(self,url):
-        vPafy = pafy.new(url)
-        play = vPafy.getbest(preftype="webm")
-        if play is not None:
-            self.sources.append(VideoSource(play.url,DISPLAY_WIDTH, DISPLAY_WIDTH))
+        self.sources.append(VideoSource(filename=url,width=DISPLAY_WIDTH, height=DISPLAY_HEIGTH,type=SourceType.youtube))
 
     def rest_add_youtube_video(self,url):
             vPafy = pafy.new(url)
@@ -110,7 +107,7 @@ class RetroFrame():
             if play is None:
                 return False
             else:
-                worker_thread = threading.Thread(target=self.rest_add_youtube_video_worker,args=(url,))
+                worker_thread = threading.Thread(target=self.rest_add_youtube_video_worker,args=(play.url,))
                 worker_thread.start()
                 return True
 
@@ -136,7 +133,7 @@ class RetroFrame():
         self.load_threads = []
         self.view_length = 5
         self.mode = ViewMode.random
-        self.allowed_content_dict = {SourceType.image:False, SourceType.video:True, SourceType.sprite:False, SourceType.animation:False}
+        self.allowed_content_dict = {SourceType.image:True, SourceType.video:True, SourceType.sprite:False, SourceType.animation:True, SourceType.giphy:True, SourceType.youtube:True}
 
         from http_server import RetroFrameHttpServer
         self.http_server = RetroFrameHttpServer(self,500)
@@ -221,30 +218,40 @@ class RetroFrame():
 
 
     def set_content_allowence(self,type_as_string,status):
-        if type_as_string == "image":
+        if type_as_string == "images":
             self.allowed_content_dict[SourceType.image] = status
             return True
-        elif type_as_string == "animation":
+        elif type_as_string == "animations":
             self.allowed_content_dict[SourceType.animation] = status
             return True
-        elif type_as_string == "sprite":
+        elif type_as_string == "sprites":
             self.allowed_content_dict[SourceType.sprite] = status
             return True
-        elif type_as_string == "video":
+        elif type_as_string == "videos":
             self.allowed_content_dict[SourceType.video] = status
+            return True
+        elif type_as_string == "giphy":
+            self.allowed_content_dict[SourceType.giphy] = status
+            return True
+        elif type_as_string == "youtube":
+            self.allowed_content_dict[SourceType.youtube] = status
             return True
         else:
             return False
 
     def get_content_allowance(self,type_as_string):
-        if type_as_string == "image":
+        if type_as_string == "images":
             return self.allowed_content_dict[SourceType.image]
-        elif type_as_string == "animation":
+        elif type_as_string == "animations":
             return self.allowed_content_dict[SourceType.animation]
-        elif type_as_string == "sprite":
+        elif type_as_string == "sprites":
             return self.allowed_content_dict[SourceType.sprite]
-        elif type_as_string == "video":
+        elif type_as_string == "videos":
             return self.allowed_content_dict[SourceType.video]
+        elif type_as_string == "giphy":
+            return self.allowed_content_dict[SourceType.giphy]
+        elif type_as_string == "youtube":
+            return self.allowed_content_dict[SourceType.youtube]
         else:
             return False
  

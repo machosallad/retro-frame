@@ -7,6 +7,7 @@ HTML and REST server for the retro-frame.
 from flask import Flask, render_template, request, jsonify
 from abstract_source import SourceType
 from app import RetroFrame
+import json
 import threading
 
 # Class declarations
@@ -67,6 +68,31 @@ class RetroFrameHttpServer(threading.Thread):
                         return jsonify(status=self.app_handle.get_content_allowance(type))
                     else:
                         'Failed to set status', 500
+                else:
+                    return 'Unsupported content-type', 400
+        
+        @app.route('/api/v1/sources/status', methods = ['GET', 'PUT', 'PATCH'])
+        def source_all_status():
+            if request.method == 'GET':
+                imagesStatus = self.app_handle.get_content_allowance("images")
+                animationsStatus = self.app_handle.get_content_allowance("animations")
+                videosStatus = self.app_handle.get_content_allowance("videos")
+                giphyStatus = self.app_handle.get_content_allowance("giphy")
+                youtubeStatus = self.app_handle.get_content_allowance("youtube")
+
+                output = json.dumps(dict(images=("status",imagesStatus),animations=("status",animationsStatus),videos=("status",videosStatus),giphy=("status",giphyStatus),youtube=("status",youtubeStatus)))
+                return output
+                
+            elif request.method == 'PUT' or request.method == 'PATCH':
+                if request.is_json:
+                    content = request.get_json()
+                    self.app_handle.set_content_allowence("images",content['images']['status'])
+                    self.app_handle.set_content_allowence("animations",content['animations']['status'])
+                    self.app_handle.set_content_allowence("videos",content['videos']['status'])
+                    self.app_handle.set_content_allowence("giphy",content['giphy']['status'])
+                    self.app_handle.set_content_allowence("youtube",content['youtube']['status'])
+
+                    return 'Filters updated', 200
                 else:
                     return 'Unsupported content-type', 400
 

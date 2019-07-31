@@ -11,6 +11,8 @@ class SourceType(Enum):
     animation = 2
     sprite = 3
     video = 4
+    giphy = 5
+    youtube = 6
 
 class AbstractSource(abc.ABC):
     def __init__(self,width=16, height=16):
