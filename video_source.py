@@ -9,7 +9,7 @@ from helpers import ImageHelper
 from abstract_source import AbstractSource, SourceType
 
 class VideoSource(AbstractSource):
-    def __init__(self, filename, width=16, height=16):
+    def __init__(self, filename, width=16, height=16,type=SourceType.video):
         super().__init__(width, height)
 
         self.current_frame = 0
@@ -17,7 +17,7 @@ class VideoSource(AbstractSource):
         self.total_time = 0
         self.video_frames = []
         self.frame_rate = 0
-        self._type = SourceType.video
+        self._type = type
         self.load(filename)
 
     def load(self, filename):

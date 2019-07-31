@@ -8,13 +8,13 @@ from helpers import ImageHelper
 from abstract_source import AbstractSource, SourceType
 
 class AnimationSource(AbstractSource):
-    def __init__(self,filename, width=16, height=16):
+    def __init__(self,filename, width=16, height=16,type=SourceType.animation):
         super().__init__(width, height)
         self.images_rgb_data = []
         self.number_of_frames = 0
         self.current_frame = 0
         self.duration = []
-        self._type = SourceType.animation
+        self._type = type
 
         self.load(filename)
 

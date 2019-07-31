@@ -57,7 +57,7 @@ class RetroFrame():
                 random_gif_url = r.json()["data"]["images"]["fixed_height_small"]["url"]
                 print(random_gif_url)
                 resp = requests.get(random_gif_url)
-                self.sources.append(AnimationSource(BytesIO(resp.content)))
+                self.sources.append(AnimationSource(filename=BytesIO(resp.content),type=SourceType.giphy))
             except:
                 pass
 
@@ -96,13 +96,10 @@ class RetroFrame():
             vPafy = pafy.new(url)
             play = vPafy.getbest(preftype="webm")
             if play is not None:
-                self.sources.append(VideoSource(play.url,DISPLAY_WIDTH, DISPLAY_WIDTH))
+                self.sources.append(VideoSource(play.url,DISPLAY_WIDTH, DISPLAY_HEIGTH))
 
     def rest_add_youtube_video_worker(self,url):
-        vPafy = pafy.new(url)
-        play = vPafy.getbest(preftype="webm")
-        if play is not None:
-            self.sources.append(VideoSource(play.url,DISPLAY_WIDTH, DISPLAY_WIDTH))
+        self.sources.append(VideoSource(filename=url,width=DISPLAY_WIDTH, height=DISPLAY_HEIGTH,type=SourceType.youtube))
 
     def rest_add_youtube_video(self,url):
             vPafy = pafy.new(url)
@@ -110,7 +107,7 @@ class RetroFrame():
             if play is None:
                 return False
             else:
-                worker_thread = threading.Thread(target=self.rest_add_youtube_video_worker,args=(url,))
+                worker_thread = threading.Thread(target=self.rest_add_youtube_video_worker,args=(play.url,))
                 worker_thread.start()
                 return True
 
