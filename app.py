@@ -116,6 +116,22 @@ class RetroFrame():
         worker_thread.start()
         return True
 
+    def rest_set_slideshow_control(self,command):
+        if command == "next":
+            self.slideshow_request_next = True
+            return True
+        elif command == "previous":
+            self.slideshow_request_previous = True
+            return True
+        elif command == "pause":
+            self.slideshow_request_pause = True
+            return True
+        elif command == "play":
+            self.slideshow_request_pause = False
+            return True
+
+        return False
+
     def __init__(self):
         # Change working directory
         os.chdir(os.path.dirname(os.path.abspath(__file__)))
@@ -134,6 +150,9 @@ class RetroFrame():
         self.view_length = 5
         self.mode = ViewMode.random
         self.allowed_content_dict = {SourceType.image:True, SourceType.video:True, SourceType.sprite:False, SourceType.animation:True, SourceType.giphy:True, SourceType.youtube:True}
+        self.slideshow_request_pause = False
+        self.slideshow_request_next = False
+        self.slideshow_request_previous = False
 
         from http_server import RetroFrameHttpServer
         self.http_server = RetroFrameHttpServer(self,500)
@@ -177,7 +196,7 @@ class RetroFrame():
                     source.update(dt)
                 
                 # Check if new source should be selected
-                if (time.time() - lastSourceChange > self.view_length):
+                if (time.time() - lastSourceChange > self.view_length) or self.slideshow_request_next or self.slideshow_request_previous:
                     lastSourceChange = time.time()
                     self.source_index = self.get_next_source_index()
 
@@ -198,10 +217,22 @@ class RetroFrame():
         return
 
     def get_next_source_index(self):
+        # Check if any slideshow control commands are active
         next_index = self.source_index + 1
+        if self.slideshow_request_previous:
+            next_index = self.source_index - 1
+            self.slideshow_request_previous = False
+        elif self.slideshow_request_next:
+            next_index = self.source_index + 1
+            self.slideshow_request_next = False
+        elif self.slideshow_request_pause:
+            return self.source_index
+
         # First check if we are beyond the list or not
         if next_index >= self.sources.__len__():
             next_index = 0
+        elif next_index < 0:
+            next_index = self.sources.__len__() - 1
 
         # Check if next is allowed
         while True:

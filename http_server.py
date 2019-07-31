@@ -67,9 +67,19 @@ class RetroFrameHttpServer(threading.Thread):
                     if self.app_handle.set_content_allowence(type,content['status']):
                         return jsonify(status=self.app_handle.get_content_allowance(type))
                     else:
-                        'Failed to set status', 500
+                        return 'Failed to set status', 500
                 else:
                     return 'Unsupported content-type', 400
+
+        @app.route('/api/v1/slideshow/', methods = ['PUT', 'PATCH'])
+        def source_slideshow():
+            if request.method == 'PUT' or request.method == 'PATCH':
+                if request.is_json:
+                    content = request.get_json()
+                    if self.app_handle.rest_set_slideshow_control(content['command']):
+                        return json.dumps({'success':True}), 200, {'ContentType':'application/json'} 
+                    else:
+                        return 'Unknown command received', 500
         
         @app.route('/api/v1/sources/status', methods = ['GET', 'PUT', 'PATCH'])
         def source_all_status():
