@@ -53,6 +53,35 @@ $(document).ready(function(){
         })
     });
 
+    // Submit of slideshow command
+    $("#command-form button").on('click', function(){
+        var id = $(this).attr('id');
+        var formData = null
+        if (id == "slideshow-play")
+            formData = JSON.stringify( { "command": "play"} )
+        else if (id == "slideshow-pause")
+            formData = JSON.stringify( { "command": "pause"} )
+        else if (id == "slideshow-previous")
+            formData = JSON.stringify( { "command": "previous"} )
+        else if (id == "slideshow-next")
+            formData = JSON.stringify( { "command": "next"} )
+
+        // send ajax
+        console.log(formData)
+        $.ajax({
+            url: 'api/v1/slideshow', // url where to submit the request
+            type : "PATCH", // type of action POST || GET
+            contentType: 'application/json;charset=UTF-8',
+            data : formData,
+            success : function(result) {
+                console.log(result);
+            },
+            error: function(xhr, resp, text) {
+                console.log(xhr, resp, text);
+            }
+        })
+    });
+
     // Submit Youtube video
     $("#youtube-submit").on('click', function(){
         // send ajax
