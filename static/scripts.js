@@ -55,16 +55,8 @@ $(document).ready(function(){
 
     // Submit of slideshow command
     $("#command-form button").on('click', function(){
-        var id = $(this).attr('id');
-        var formData = null
-        if (id == "slideshow-play")
-            formData = JSON.stringify( { "command": "play"} )
-        else if (id == "slideshow-pause")
-            formData = JSON.stringify( { "command": "pause"} )
-        else if (id == "slideshow-previous")
-            formData = JSON.stringify( { "command": "previous"} )
-        else if (id == "slideshow-next")
-            formData = JSON.stringify( { "command": "next"} )
+        var command = $(this).attr('data-id');
+        formData = JSON.stringify( { "command": command} )
 
         // send ajax
         console.log(formData)
