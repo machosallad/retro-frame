@@ -34,7 +34,8 @@ $(document).ready(function(){
     })
 
     // Submit of brightness
-    $("#brightness-submit").on('click', function(){
+    $("#displayBrightness").on('input', function(){
+        console.log("Range changed")
         // send ajax
         var value = parseFloat($('#displayBrightness').val())
         var formData = JSON.stringify( { "level": value} )
