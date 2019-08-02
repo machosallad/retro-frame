@@ -7,11 +7,14 @@ import numpy as np
 from PIL import Image
 from helpers import ImageHelper
 from abstract_source import AbstractSource, SourceType
+import pickle
+import os
 
 class VideoSource(AbstractSource):
-    def __init__(self, filename, width=16, height=16,type=SourceType.video):
+    def __init__(self, filename, width=16, height=16,type=SourceType.video, videoid=""):
         super().__init__(width, height)
 
+        self.videoid = videoid
         self.current_frame = 0
         self.number_of_frames = 0
         self.total_time = 0
@@ -20,41 +23,66 @@ class VideoSource(AbstractSource):
         self._type = type
         self.load(filename)
 
-    def load(self, filename):
-        print ("Loading video: {0}".format(filename))
-        video = cv2.VideoCapture(filename)
+    def load_binary(self,data):
+        file = open(data,"rb")
+        object_file = pickle.load(file)
+        deserialised = object_file
+        file.close()
 
-        # Find OpenCV version
-        (major_ver, minor_ver, subminor_ver) = (cv2.__version__).split('.')
-      
-        if int(major_ver)  < 3 :
-            self.frame_rate = video.get(cv2.cv.CV_CAP_PROP_FPS)
-        else:
-            self.frame_rate = video.get(cv2.CAP_PROP_FPS)
+        self.video_frames = deserialised
+        self.number_of_frames = self.video_frames.__len__()
 
-        print ("Frames per second : {0}".format(self.frame_rate))
-
-        frame_counter = 0
-
-        start_time = time.time()
-        while (True):
-            # Start capturing the video frames
-            ret, frame = video.read()
-
-            if not ret:
-                break       
-
-            frame = cv2.cvtColor(frame,cv2.COLOR_BGR2RGB)
-            frame = cv2.resize(frame, (self.width,self.height), interpolation = cv2.INTER_AREA )
-            self.video_frames.append(frame)
-            frame_counter += 1
-                        
-        video.release()
-        stop_time = time.time()
-        print("Elapsed time to capture video frames:{0}".format(stop_time-start_time))
+        parts = data.split("_")
+        self.frame_rate = float(parts[1].split(".")[0])
+        self._type = SourceType.youtube
         
-        self.number_of_frames = frame_counter
-        print ("Number of frames captures:{0}".format(self.number_of_frames))
+    def dump_buffer(self):
+        dump = "cache/" + self.videoid +"_" + str(int(self.frame_rate)) + ".bin"
+        with open(dump,"wb") as handle:
+            pickle.dump(self.video_frames,handle,protocol=pickle.HIGHEST_PROTOCOL)
+
+    def load(self, filename):
+        # Check if filename is binary
+        if(filename.endswith(".bin")):
+            self.load_binary(filename)
+        else:
+            print ("Loading video: {0}".format(filename))
+            video = cv2.VideoCapture(filename)
+
+            # Find OpenCV version
+            (major_ver, minor_ver, subminor_ver) = (cv2.__version__).split('.')
+        
+            if int(major_ver)  < 3 :
+                self.frame_rate = video.get(cv2.cv.CV_CAP_PROP_FPS)
+            else:
+                self.frame_rate = video.get(cv2.CAP_PROP_FPS)
+
+            print ("Frames per second : {0}".format(self.frame_rate))
+
+            frame_counter = 0
+
+            start_time = time.time()
+            while (True):
+                # Start capturing the video frames
+                ret, frame = video.read()
+
+                if not ret:
+                    break       
+
+                frame = cv2.cvtColor(frame,cv2.COLOR_BGR2RGB)
+                frame = cv2.resize(frame, (self.width,self.height), interpolation = cv2.INTER_AREA )
+                self.video_frames.append(frame)
+                frame_counter += 1
+                            
+            video.release()
+            stop_time = time.time()
+            print("Elapsed time to capture video frames:{0}".format(stop_time-start_time))
+            
+            self.number_of_frames = frame_counter
+            print ("Number of frames captures:{0}".format(self.number_of_frames))
+
+            if self.videoid != "":
+                self.dump_buffer()
 
     def update(self, dt):
         self.total_time += dt
