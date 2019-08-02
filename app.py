@@ -205,7 +205,7 @@ class RetroFrame():
             lastFrameTime = currentTime
 
             # Verify if resources are fully loaded
-            if self.all_resources_loaded():
+            if self.all_resources_loaded() or self.sources.__len__() > 0:
                 # Update game logic, objects and data structures here using dt
                 for source in self.sources:
                     source.update(dt)
