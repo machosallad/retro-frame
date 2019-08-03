@@ -4,7 +4,7 @@ import numpy as np
 import pygame
 import sys
 
-from abstract_display import AbstractDisplay
+from display.abstract_display import AbstractDisplay
 
 
 class Computer(AbstractDisplay):

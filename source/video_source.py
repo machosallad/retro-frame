@@ -6,7 +6,7 @@ import cv2
 import numpy as np
 from PIL import Image
 from helpers import ImageHelper
-from abstract_source import AbstractSource, SourceType
+from source.abstract_source import AbstractSource, SourceType
 import pickle
 import os
 import math
