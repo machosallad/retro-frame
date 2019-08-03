@@ -5,7 +5,7 @@ HTML and REST server for the retro-frame.
 
 # Imports
 from flask import Flask, render_template, request, jsonify
-from abstract_source import SourceType
+from source.abstract import SourceType
 from app import RetroFrame
 import json
 import threading

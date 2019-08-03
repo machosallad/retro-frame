@@ -5,7 +5,7 @@ import time
 import numpy as np
 from PIL import Image
 from helpers import ImageHelper
-from abstract_source import AbstractSource, SourceType
+from source.abstract import AbstractSource, SourceType
 
 class SpriteSource(AbstractSource):
     def __init__(self, filename, x, y, dx, dy, count, duration, dx_offset=0, dy_offset=0, width=16, height=16):

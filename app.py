@@ -23,11 +23,11 @@ from random import randint
 from PIL import Image
 from pathlib import Path
 from helpers import ImageHelper
-from animation_source import AnimationSource
-from image_source import ImageSource
-from sprite_source import SpriteSource
-from video_source import VideoSource
-from abstract_source import SourceType
+from source.animation import AnimationSource
+from source.image import ImageSource
+from source.sprite import SpriteSource
+from source.video import VideoSource
+from source.abstract import SourceType
 
 # Global variables
 DISPLAY_WIDTH = 16
@@ -154,10 +154,10 @@ class RetroFrame():
         
         if platform.system() == "Linux":
             if os.uname()[1] == 'raspberrypi':
-                from ws2812b import WS2812B
+                from display.ws2812b import WS2812B
                 self.display = WS2812B(DISPLAY_WIDTH,DISPLAY_HEIGTH)
         else:
-            from computer import Computer
+            from display.computer import Computer
             self.display = Computer(DISPLAY_WIDTH, DISPLAY_HEIGTH)
 
         self.source_index = 0
@@ -170,7 +170,7 @@ class RetroFrame():
         self.slideshow_request_next = False
         self.slideshow_request_previous = False
 
-        from http_server import RetroFrameHttpServer
+        from server.http_server import RetroFrameHttpServer
         self.http_server = RetroFrameHttpServer(self,500)
         self.http_server.setDaemon(True)
         self.http_server.start()

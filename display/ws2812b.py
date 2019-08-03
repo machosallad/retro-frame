@@ -2,7 +2,7 @@
 
 import numpy as np
 import sys
-from abstract_display import AbstractDisplay
+from display.abstract_display import AbstractDisplay
 from neopixel import *
 
 # LED strip configuration:
