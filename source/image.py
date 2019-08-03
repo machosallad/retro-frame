@@ -5,7 +5,7 @@ import time
 import numpy as np
 from PIL import Image
 from helpers import ImageHelper
-from source.abstract_source import AbstractSource, SourceType
+from source.abstract import AbstractSource, SourceType
 
 class ImageSource(AbstractSource):
     def __init__(self, filename, width=16, height=16):

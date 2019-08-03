@@ -23,11 +23,11 @@ from random import randint
 from PIL import Image
 from pathlib import Path
 from helpers import ImageHelper
-from source.animation_source import AnimationSource
-from source.image_source import ImageSource
-from source.sprite_source import SpriteSource
-from source.video_source import VideoSource
-from source.abstract_source import SourceType
+from source.animation import AnimationSource
+from source.image import ImageSource
+from source.sprite import SpriteSource
+from source.video import VideoSource
+from source.abstract import SourceType
 
 # Global variables
 DISPLAY_WIDTH = 16
