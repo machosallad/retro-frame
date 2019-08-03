@@ -1,6 +1,9 @@
 # Sources
 sources/*
 
+# Cache directory
+cache/*
+
 # Visual Studio Code
 .vscode/*
 
