@@ -9,6 +9,7 @@ from helpers import ImageHelper
 from abstract_source import AbstractSource, SourceType
 import pickle
 import os
+import math
 
 class VideoSource(AbstractSource):
     def __init__(self, filename, width=16, height=16,type=SourceType.video, videoid=""):
@@ -36,8 +37,12 @@ class VideoSource(AbstractSource):
         self.frame_rate = float(parts[1].split(".")[0])
         self._type = SourceType.youtube
         
-    def dump_buffer(self):
-        dump = "cache/" + self.videoid +"_" + str(int(self.frame_rate)) + ".bin"
+    def dump_buffer(self, directory):
+        if not os.path.isdir(directory):
+            os.mkdir(directory)
+        
+        frame_rate = str(int(math.ceil(self.frame_rate)))
+        dump = "{}{}_{}.bin".format(directory,self.videoid,frame_rate) # directory/videoid_fps.bin
         with open(dump,"wb") as handle:
             pickle.dump(self.video_frames,handle,protocol=pickle.HIGHEST_PROTOCOL)
 
@@ -82,7 +87,7 @@ class VideoSource(AbstractSource):
             print ("Number of frames captures:{0}".format(self.number_of_frames))
 
             if self.videoid != "":
-                self.dump_buffer()
+                self.dump_buffer("cache/")
 
     def update(self, dt):
         self.total_time += dt

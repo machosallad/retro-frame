@@ -108,12 +108,13 @@ class RetroFrame():
         self.sources.append(VideoSource(filename=url,width=DISPLAY_WIDTH, height=DISPLAY_HEIGTH,type=SourceType.youtube,videoid=videoid))
 
     def check_video_cache(self,directory,videoid):
-        with os.scandir(directory) as entries:
-            for entry in entries:
-                filename, file_extension = os.path.splitext(entry)
-                if file_extension == ".bin":
-                    if videoid in filename:
-                        return  filename+file_extension
+        if os.path.isdir(directory):
+            with os.scandir(directory) as entries:
+                for entry in entries:
+                    filename, file_extension = os.path.splitext(entry)
+                    if file_extension == ".bin":
+                        if videoid in filename:
+                            return  filename+file_extension
         return ""  
 
     def rest_add_youtube_video(self,url):
