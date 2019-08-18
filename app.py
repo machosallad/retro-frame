@@ -107,6 +107,54 @@ class RetroFrame():
 
         self.sources.append(VideoSource(filename=url,width=DISPLAY_WIDTH, height=DISPLAY_HEIGTH,type=SourceType.youtube,videoid=videoid))
 
+    def rest_refresh_sources(self,source):
+        if source == "all":
+            self.sources.clear()
+            self.load_default_resources()
+            return True
+        else:
+            self.clear_source(source)
+            if self.reload_source(source):
+                return True
+            else:
+                return False
+
+    def clear_source(self,source):
+        for i in range(self.sources.__len__()-1,-1,-1):        
+            if source == "images":
+                if self.sources[i].type == SourceType.image:
+                    self.sources.pop(i)
+            elif source == "animations":
+                if self.sources[i].type == SourceType.animation:
+                    self.sources.pop(i)
+            elif source == "sprites":
+                if self.sources[i].type == SourceType.sprite:
+                    self.sources.pop(i)
+            elif source == "videos":
+                if self.sources[i].type == SourceType.video:
+                    self.sources.pop(i)
+            elif source == "giphy":
+                if self.sources[i].type == SourceType.giphy:
+                    self.sources.pop(i)
+            elif source == "youtube":
+                if self.sources[i].type == SourceType.youtube:
+                    self.sources.pop(i)
+
+    def reload_source(self,source):
+        result = True
+        if source == "images":
+            self.load_images(IMAGE_DIRECTORY)
+        elif source == "animations":
+            self.load_animations(ANIMATION_DIRECTORY)
+        elif source == "sprites":
+            self.load_sprites(SPRITE_DIRECTORY)
+        elif source == "videos":
+            self.load_videos(VIDEO_DIRECTORY)
+        else:
+            result = False
+        
+        return result
+
     def check_video_cache(self,directory,videoid):
         if os.path.isdir(directory):
             with os.scandir(directory) as entries:

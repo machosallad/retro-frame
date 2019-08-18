@@ -25,6 +25,14 @@ class RetroFrameHttpServer(threading.Thread):
         def index():
             return render_template("index.html")
 
+         
+        @app.route('/api/v1/sources/<type>/refresh', methods = ['GET', 'PUT', 'PATCH'])
+        def refresh(type):
+            if self.app_handle.rest_refresh_sources(type):
+                return 'Success', 200
+            else:
+                return 'Failed to refresh content', 500
+
         @app.route('/api/v1/display/brightness', methods = ['GET', 'PUT', 'PATCH'])
         def brightness():
             print(request)

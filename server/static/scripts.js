@@ -75,6 +75,23 @@ $(document).ready(function(){
         })
     });
 
+    // Submit of refresh command
+    $("#refresh-form button").on('click', function(){
+        var command = $(this).attr('data-id');
+        address = 'api/v1/sources/' + command + "/refresh"
+        // send ajax
+        $.ajax({
+            url: address, // url where to submit the request
+            type : "GET", // type of action POST || GET
+            success : function(result) {
+                console.log(result);
+            },
+            error: function(xhr, resp, text) {
+                console.log(xhr, resp, text);
+            }
+        })
+    });
+
     // Submit Youtube video
     $("#youtube-submit").on('click', function(){
         // send ajax
