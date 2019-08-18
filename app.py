@@ -204,6 +204,9 @@ class RetroFrame():
             if os.uname()[1] == 'raspberrypi':
                 from display.ws2812b import WS2812B
                 self.display = WS2812B(DISPLAY_WIDTH,DISPLAY_HEIGTH)
+
+                from usb_sync import USBDetector
+                self.usb_sync = USBDetector("sources/")
         else:
             from display.computer import Computer
             self.display = Computer(DISPLAY_WIDTH, DISPLAY_HEIGTH)
@@ -223,8 +226,6 @@ class RetroFrame():
         self.http_server.setDaemon(True)
         self.http_server.start()
 
-        from usb_sync import USBDetector
-        self.usb_sync = USBDetector("sources/")
 
     def load_default_resources(self):
         """ Load all resources which should always be used by the application."""
