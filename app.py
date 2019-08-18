@@ -175,6 +175,8 @@ class RetroFrame():
         self.http_server.setDaemon(True)
         self.http_server.start()
 
+        from usb_sync import USBDetector
+        self.usb_sync = USBDetector("sources/")
 
     def load_default_resources(self):
         """ Load all resources which should always be used by the application."""
