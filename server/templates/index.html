@@ -1,182 +1,187 @@
 <!DOCTYPE html>
 <html lang="en">
 
-<head>
-  <meta charset="utf-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="Retro Frame Dashboard">
-  <meta name="author" content="Jesper Melin ">
-  <title>Retro Frame Dashboard</title>
-  <!--
-    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
-  -->
-  <link href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet"
-    integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
-  <link href="https://stackpath.bootstrapcdn.com/bootswatch/4.3.1/darkly/bootstrap.min.css" rel="stylesheet"
-    integrity="sha384-w+8Gqjk9Cuo6XH9HKHG5t5I1VR4YBNdPt/29vwgfZR485eoEJZ8rJRbm3TR32P6k" crossorigin="anonymous">
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.0/umd/popper.min.js"></script>
-  <link href="https://cdn.jsdelivr.net/gh/gitbrent/bootstrap4-toggle@3.5.0/css/bootstrap4-toggle.min.css"
-    rel="stylesheet">
-  <script src="https://cdn.jsdelivr.net/gh/gitbrent/bootstrap4-toggle@3.5.0/js/bootstrap4-toggle.min.js"></script>
-  <link rel="stylesheet" href="{{ url_for('static', filename='custom.css') }}">
-</head>
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="description" content="Retro Frame Dashboard">
+        <meta name="author" content="Jesper Melin ">
+        <title>Retro Frame Dashboard</title>
+        <!--
+<link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+-->
+        <link href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet"
+              integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
+        <link href="https://stackpath.bootstrapcdn.com/bootswatch/4.3.1/darkly/bootstrap.min.css" rel="stylesheet"
+              integrity="sha384-w+8Gqjk9Cuo6XH9HKHG5t5I1VR4YBNdPt/29vwgfZR485eoEJZ8rJRbm3TR32P6k" crossorigin="anonymous">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.0/umd/popper.min.js"></script>
+        <link href="https://cdn.jsdelivr.net/gh/gitbrent/bootstrap4-toggle@3.5.0/css/bootstrap4-toggle.min.css"
+              rel="stylesheet">
+        <script src="https://cdn.jsdelivr.net/gh/gitbrent/bootstrap4-toggle@3.5.0/js/bootstrap4-toggle.min.js"></script>
+        <link rel="stylesheet" href="{{ url_for('static', filename='custom.css') }}">
+    </head>
 
-<body>
-  <div class="container">
-    <h1>Retro Frame Dashboard</h1>
-    <p class="lead">Welcome to the Retro Frame Dashboard.<br>This page allows you to control several aspects of the
-      frame.</p>
+    <body>
+        <div class="container">
+            <h1>Retro Frame Dashboard</h1>
+            <p class="lead">Welcome to the Retro Frame Dashboard.<br>This page allows you to control several aspects of the
+                frame.</p>
 
-    <ul class="nav nav-tabs role=" tablist">
-      <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#display" role="tab"><i
-            class="fa fa-wrench fa-2x"></i></a></li>
-      <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#menu2" role="tab"><i
-            class="fa fa-film fa-2x"></i></a></li>
-      <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#menu3" role="tab"><i
-            class="fa fa-plus fa-2x"></i></a></li>
-    </ul>
+            <ul class="nav nav-tabs" role="tablist">
+                <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#display" role="tab"><i
+                                                                                                         class="fa fa-wrench fa-2x"></i></a></li>
+                <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#menu2" role="tab"><i
+                                                                                                       class="fa fa-film fa-2x"></i></a></li>
+                <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#menu3" role="tab"><i
+                                                                                                       class="fa fa-plus fa-2x"></i></a></li>
+            </ul>
 
-    <div class="tab-content">
-      <div id="display" class="tab-pane fade" role="tabpanel">
-        <h2>Display</h2>
-        <p>Information regarding the used display and adjustment of display settings.</p>
-        <h3>Brightness</h3>
-        <form id="brightness-form">
-          <div class="form-group">
-            <input type="range" min="0.0" max="1.0" step="0.02" value="0.5" class="custom-range" id="displayBrightness" name="level">
-          </div>
-        </form>
-      </div>
+            <div class="tab-content">
+                <div id="display" class="tab-pane fade" role="tabpanel">
+                    <h2>Display</h2>
+                    <p>Information regarding the used display and adjustment of display settings.</p>
+                    <h3>Brightness</h3>
+                    <form id="brightness-form">
+                        <div class="form-group">
+                            <input type="range" min="0.0" max="1.0" step="0.02" value="0.5" class="custom-range" id="displayBrightness" name="level">
+                        </div>
+                    </form>
+                </div>
 
-      <div id="menu2" class="tab-pane fade" role="tabpanel">
-        <h2>Slideshow</h2>
-        <div class="row">
-          <div class="col">
-            <h3>Controls</h3>
-            <form id="command-form">
-              <div class="btn-group btn-group-justified">
-                <button type="button" id="slideshow-play" data-id="play" class="btn btn-primary"><i
-                    class="fa fa-play fa-4x"></i></button>
-                <button type="button" id="slideshow-pause" data-id="pause" class="btn btn-primary"><i
-                    class="fa fa-pause fa-4x"></i></button>
-                <button type="button" id="slideshow-previous" data-id="previous" class="btn btn-primary"><i
-                    class="fa fa-backward fa-4x"></i></button>
-                <button type="button" id="slideshow-next" data-id="next" class="btn btn-primary"><i
-                    class="fa fa-forward fa-4x"></i></button>
-              </div>
-            </form>
-          </div>
-          <div class="col">
-            <h3>Content</h3>
-            <form id="allowance-form">
-              <div class="form-check pl-0">
-                <input class="form-check-input" type="checkbox" id="imagesToggle" data-id="images" data-toggle="toggle"
-                  data-on="Images" data-off="Images" data-offstyle="danger" data-width="150" data-size="lg">
-              </div>
-              <br>
-              <div class="form-check pl-0">
-                <input class="form-check-input" type="checkbox" id="animationsToggle" data-id="animations"
-                  data-toggle="toggle" data-on="Animations" data-off="Animations" data-offstyle="danger"
-                  data-width="150" data-size="lg">
-              </div>
-              <br>
-              <div class="form-check pl-0">
-                <input class="form-check-input" type="checkbox" id="videosToggle" data-id="videos" data-toggle="toggle"
-                  data-on="Videos" data-off="Videos" data-offstyle="danger" data-width="150" data-size="lg">
-              </div>
-              <br>
-              <div class="form-check pl-0">
-                <input class="form-check-input" type="checkbox" id="giphyToggle" data-id="giphy" data-toggle="toggle"
-                  data-on="Giphy" data-off="Giphy" data-offstyle="danger" data-width="150" data-size="lg">
-              </div>
-              <br>
-              <div class="form-check pl-0">
-                <input class="form-check-input" type="checkbox" id="youtubeToggle" data-id="youtube"
-                  data-toggle="toggle" data-on="YouTube" data-off="YouTube" data-offstyle="danger" data-width="150"
-                  data-size="lg">
-              </div>
-            </form>
-          </div>
+                <div id="menu2" class="tab-pane fade" role="tabpanel">
+                    <h2>Slideshow</h2>
+                    <div class="row">
+                        <div class="col">
+                            <h3>Controls</h3>
+                            <form id="command-form">
+                                <div class="btn-group btn-group-justified">
+                                    <button type="button" id="slideshow-play" data-id="play" class="btn btn-primary"><i
+                                                                                                                        class="fa fa-play fa-4x"></i></button>
+                                    <button type="button" id="slideshow-pause" data-id="pause" class="btn btn-primary"><i
+                                                                                                                          class="fa fa-pause fa-4x"></i></button>
+                                    <button type="button" id="slideshow-previous" data-id="previous" class="btn btn-primary"><i
+                                                                                                                                class="fa fa-backward fa-4x"></i></button>
+                                    <button type="button" id="slideshow-next" data-id="next" class="btn btn-primary"><i
+                                                                                                                        class="fa fa-forward fa-4x"></i></button>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="col">
+                            <h3>Content</h3>
+                            <form id="allowance-form">
+                                <div class="form-check pl-0">
+                                    <input class="form-check-input" type="checkbox" id="imagesToggle" data-id="images" data-toggle="toggle"
+                                           data-on="Images" data-off="Images" data-offstyle="danger" data-width="150" data-size="lg">
+                                </div>
+                                <br>
+                                <div class="form-check pl-0">
+                                    <input class="form-check-input" type="checkbox" id="animationsToggle" data-id="animations"
+                                           data-toggle="toggle" data-on="Animations" data-off="Animations" data-offstyle="danger"
+                                           data-width="150" data-size="lg">
+                                </div>
+                                <br>
+                                <div class="form-check pl-0">
+                                    <input class="form-check-input" type="checkbox" id="videosToggle" data-id="videos" data-toggle="toggle"
+                                           data-on="Videos" data-off="Videos" data-offstyle="danger" data-width="150" data-size="lg">
+                                </div>
+                                <br>
+                                <div class="form-check pl-0">
+                                    <input class="form-check-input" type="checkbox" id="giphyToggle" data-id="giphy" data-toggle="toggle"
+                                           data-on="Giphy" data-off="Giphy" data-offstyle="danger" data-width="150" data-size="lg">
+                                </div>
+                                <br>
+                                <div class="form-check pl-0">
+                                    <input class="form-check-input" type="checkbox" id="youtubeToggle" data-id="youtube"
+                                           data-toggle="toggle" data-on="YouTube" data-off="YouTube" data-offstyle="danger" data-width="150"
+                                           data-size="lg">
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+
+                    <h3>Refresh Content</h3>
+                    <form id="refresh-form">
+                            <button type="button" id="refresh-images" data-id="images" class="btn btn-primary btn-lg">Images</button>
+                            <button type="button" id="refresh-animations" data-id="animations" class="btn btn-primary btn-lg">Animations</button>
+                            <button type="button" id="refresh-sprites" data-id="sprites" class="btn btn-primary btn-lg">Sprites</button>
+                            <button type="button" id="refresh-videos" data-id="videos" class="btn btn-primary btn-lg">Videos</button>
+                    </form>
+                </div>
+
+                <div id="menu3" class="tab-pane fade" role="tabpanel">
+                    <h2>New Content</h2>
+                    <div class="container">
+                        <div class="row">
+                            <div class="col">
+                                <h3>Giphy</h3>
+                                <p>Add random animations from Giphy.com</p>
+                                <form>
+                                    <div class="form-row">
+                                        <div class="form-group col-md-6">
+                                            <label for="giphyNumberOfItems">Number of items</label>
+                                            <input type="number" class="form-control" id="giphyCount" placeholder="5">
+                                        </div>
+                                        <div class="form-group col-md-6">
+                                            <label for="giphyTag">Tag</label>
+                                            <input type="text" class="form-control" id="giphyTag" placeholder="pixelart">
+                                        </div>
+                                        <button type="button" id="giphy-submit" class="btn btn-primary mb-2">Submit</button>
+                                    </div>
+                                </form>
+                            </div>
+                            <div class="col">
+                                <h3>YouTube</h3>
+                                <p>Add a new video from YouTube.com</p>
+                                <form>
+                                    <div class="form-group">
+                                        <label for="addYouTube">YouTube video url</label>
+                                        <input type="text" class="form-control" id="addYouTube"
+                                               placeholder="https://www.youtube.com/watch?v=dQw4w9WgXcQ">
+                                    </div>
+                                    <button type="button" id="youtube-submit" class="btn btn-primary mb-2">Submit</button>
+                                </form>
+                            </div>
+                        </div> <!-- END first row-->
+                        <div class="row">
+                            <div class="col">
+                                <h3>Videos</h3>
+                                <form>
+                                    <div class="form-group">
+                                        <label for="uploadVideoForm">Upload a video to the frame</label>
+                                        <input type="file" class="form-control-file" id="uploadVideoForm">
+                                    </div>
+                                    <button type="submit" class="btn btn-primary mb-2">Upload</button>
+                                </form>
+                            </div>
+                            <div class="col">
+                                <h3>Images</h3>
+                                <form>
+                                    <div class="form-group">
+                                        <label for="uploadImageForm">Upload an image to the frame</label>
+                                        <input type="file" class="form-control-file" id="uploadImageForm">
+                                    </div>
+                                    <button type="submit" class="btn btn-primary mb-2">Upload</button>
+                                </form>
+                            </div>
+
+                        </div> <!-- END second row-->
+                    </div> <!-- END content grid-->
+                </div> <!-- END add content tab-->
+
+
+            </div>
         </div>
 
-        <h3>Display mode</h3>
-        <p>TODO...</p>
-      </div>
-
-      <div id="menu3" class="tab-pane fade" role="tabpanel">
-        <h2>New Content</h2>
-        <div class="container">
-          <div class="row">
-            <div class="col">
-              <h3>Giphy</h3>
-              <p>Add random animations from Giphy.com</p>
-              <form>
-                <div class="form-row">
-                  <div class="form-group col-md-6">
-                    <label for="giphyNumberOfItems">Number of items</label>
-                    <input type="number" class="form-control" id="giphyCount" placeholder="5">
-                  </div>
-                  <div class="form-group col-md-6">
-                    <label for="giphyTag">Tag</label>
-                    <input type="text" class="form-control" id="giphyTag" placeholder="pixelart">
-                  </div>
-                  <button type="button" id="giphy-submit" class="btn btn-primary mb-2">Submit</button>
-                </div>
-              </form>
-            </div>
-            <div class="col">
-              <h3>YouTube</h3>
-              <p>Add a new video from YouTube.com</p>
-              <form>
-                <div class="form-group">
-                  <label for="addYouTube">YouTube video url</label>
-                  <input type="text" class="form-control" id="addYouTube"
-                    placeholder="https://www.youtube.com/watch?v=dQw4w9WgXcQ">
-                </div>
-                <button type="button" id="youtube-submit" class="btn btn-primary mb-2">Submit</button>
-              </form>
-            </div>
-          </div> <!-- END first row-->
-          <div class="row">
-            <div class="col">
-              <h3>Videos</h3>
-              <form>
-                <div class="form-group">
-                  <label for="uploadVideoForm">Upload a video to the frame</label>
-                  <input type="file" class="form-control-file" id="uploadVideoForm">
-                </div>
-                <button type="submit" class="btn btn-primary mb-2">Upload</button>
-              </form>
-            </div>
-            <div class="col">
-              <h3>Images</h3>
-              <form>
-                <div class="form-group">
-                  <label for="uploadImageForm">Upload an image to the frame</label>
-                  <input type="file" class="form-control-file" id="uploadImageForm">
-                </div>
-                <button type="submit" class="btn btn-primary mb-2">Upload</button>
-              </form>
-            </div>
-
-          </div> <!-- END second row-->
-        </div> <!-- END content grid-->
-      </div> <!-- END add content tab-->
-
-
-    </div>
-  </div>
-
-  <!-- scripts -->
-  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
-    integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
-    crossorigin="anonymous"></script>
-  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.bundle.min.js"
-    integrity="sha384-xrRywqdh3PHs8keKZN+8zzc5TX0GRTLCcmivcbNJWm2rs5C8PRhcEn3czEjhAO9o"
-    crossorigin="anonymous"></script>
-  <script type="text/javascript" src="{{ url_for('static', filename='scripts.js') }}"></script>
-</body>
+        <!-- scripts -->
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+                integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+                crossorigin="anonymous"></script>
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.bundle.min.js"
+                integrity="sha384-xrRywqdh3PHs8keKZN+8zzc5TX0GRTLCcmivcbNJWm2rs5C8PRhcEn3czEjhAO9o"
+                crossorigin="anonymous"></script>
+        <script type="text/javascript" src="{{ url_for('static', filename='scripts.js') }}"></script>
+    </body>
 
 </html>
