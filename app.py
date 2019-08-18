@@ -32,7 +32,7 @@ from source.abstract import SourceType
 # Global variables
 DISPLAY_WIDTH = 16
 DISPLAY_HEIGTH = 16
-FPS = 60
+FPS = 30
 SPRITE_DIRECTORY    =   "sources/sprites/"
 IMAGE_DIRECTORY     =   "sources/images/"
 ANIMATION_DIRECTORY =   "sources/animations/"
