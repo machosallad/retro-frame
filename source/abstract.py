@@ -21,6 +21,7 @@ class AbstractSource(abc.ABC):
         self.number_of_pixels = self.height * self.width
         self._buffer = np.zeros((self.height, self.width, 3), dtype=np.uint8)
         self.totalTime = 0.
+        self.fps = 0
         self._type = SourceType.base
     
     @property

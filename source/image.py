@@ -12,6 +12,7 @@ class ImageSource(AbstractSource):
         super().__init__(width, height)
         self._type = SourceType.image
         self.load(filename)
+        self.fps = 1
 
     def load(self, filename):
         im = Image.open(filename)

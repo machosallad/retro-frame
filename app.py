@@ -16,6 +16,7 @@ import pafy
 import youtube_dl
 import threading
 import random
+import pygame
 from io import BytesIO
 from enum import Enum
 from random import seed
@@ -32,7 +33,7 @@ from source.abstract import SourceType
 # Global variables
 DISPLAY_WIDTH = 16
 DISPLAY_HEIGTH = 16
-FPS = 30
+FPS = 25
 SPRITE_DIRECTORY    =   "sources/sprites/"
 IMAGE_DIRECTORY     =   "sources/images/"
 ANIMATION_DIRECTORY =   "sources/animations/"
@@ -214,7 +215,7 @@ class RetroFrame():
         self.source_index = 0
         self.sources = []
         self.load_threads = []
-        self.view_length = 5
+        self.view_length = 15
         self.mode = ViewMode.random
         self.allowed_content_dict = {SourceType.image:True, SourceType.video:True, SourceType.sprite:False, SourceType.animation:True, SourceType.giphy:True, SourceType.youtube:True}
         self.slideshow_request_pause = False
@@ -246,16 +247,13 @@ class RetroFrame():
         wait_animation = AnimationSource(WAIT_ANIMATION)
 
         # Prepare and start loading resources
-        lastFrameTime = time.time()
         lastSourceChange = time.time()
+        clock = pygame.time.Clock()
         self.load_default_resources()
+        dt = 0
+        requested_fps = 0
        
         while True:
-            # Calculate delta time
-            currentTime = time.time()
-            dt = currentTime - lastFrameTime
-            lastFrameTime = currentTime
-
             # Verify if resources are fully loaded
             if self.all_resources_loaded() or self.sources.__len__() > 0:
                 # Update game logic, objects and data structures here using dt
@@ -269,18 +267,21 @@ class RetroFrame():
 
                 # Update the display buffer
                 self.display.buffer = self.sources[self.source_index].buffer
+                requested_fps = self.sources[self.source_index].fps
             else:
                 # Show waiting animation
                 wait_animation.update(dt)
                 self.display.buffer = wait_animation.buffer
             
-           # Render the frame
+            # Render the frame
             self.display.show()
 
-            # To limit CPU usage do not go faster than 60 "fps"
-            sleepTime = 1./FPS - dt
-            if sleepTime > 0:
-                time.sleep(sleepTime)
+            # Limit CPU usage do not go faster than FPS
+            #print("FPS:", clock.get_fps(), "DT:", dt) # FPS = 1 / time to process loop
+            if requested_fps > 0:
+                dt = clock.tick(requested_fps)
+            else:
+                dt = clock.tick(FPS)
         return
 
     def get_next_source_index(self):

@@ -43,7 +43,7 @@ class AnimationSource(AbstractSource):
 
             try:
                 # The time to display the current frame of the GIF, in milliseconds and store
-                self.duration.append(float(im.info["duration"]) / 1000)
+                self.duration.append(float(im.info["duration"]))
                 im.seek(im.tell() + 1)
             except KeyError:
                 print("{} has no duration meta data!".format(filename))
