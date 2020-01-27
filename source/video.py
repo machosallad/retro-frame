@@ -21,6 +21,7 @@ class VideoSource(AbstractSource):
         self.total_time = 0
         self.video_frames = []
         self.frame_rate = 0
+        self.frame_time = 0.0
         self._type = type
         self.load(filename)
 
@@ -35,6 +36,7 @@ class VideoSource(AbstractSource):
 
         parts = data.split("_")
         self.frame_rate = float(parts[1].split(".")[0])
+        self.fps = self.frame_rate
         self._type = SourceType.youtube
         
     def dump_buffer(self, directory):
@@ -63,6 +65,8 @@ class VideoSource(AbstractSource):
                 self.frame_rate = video.get(cv2.CAP_PROP_FPS)
 
             print ("Frames per second : {0}".format(self.frame_rate))
+            self.frame_time = 1./self.frame_rate
+            self.fps = self.frame_rate
 
             frame_counter = 0
 
@@ -90,10 +94,15 @@ class VideoSource(AbstractSource):
                 self.dump_buffer("cache/")
 
     def update(self, dt):
-        self.total_time += dt
-        if(self.total_time > (1./self.frame_rate)):
+        if self.fps > 0:
+            # Grab the next frame directly
             self.current_frame += 1
-            self.total_time = 0
+        else:
+            # Calculate if a new frame should be selected
+            self.total_time += dt
+            if(self.total_time > self.frame_time):
+                self.current_frame += 1
+                self.total_time = 0
 
         # Restore the frame counter
         if self.current_frame >= self.number_of_frames:
