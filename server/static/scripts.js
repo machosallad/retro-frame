@@ -17,6 +17,19 @@ $(document).ready(function(){
     })
 
     $.ajax({
+        url: 'api/v1/settings/length', // url where to submit the request
+        type : "GET", // type of action POST || GET
+        dataType : 'json',
+        success : function(data) {
+            console.log(data);
+            $('#slideshowLength').val(data.level)
+        },
+        error: function(xhr, resp, text) {
+            console.log(xhr, resp, text);
+        }
+    })
+
+    $.ajax({
         url: 'api/v1/sources/status', // url where to submit the request
         type : "GET", // type of action POST || GET
         dataType : 'json',
@@ -42,6 +55,27 @@ $(document).ready(function(){
         console.log(formData)
         $.ajax({
             url: 'api/v1/display/brightness', // url where to submit the request
+            type : "PATCH", // type of action POST || GET
+            contentType: 'application/json;charset=UTF-8',
+            data : formData,
+            success : function(result) {
+                console.log(result);
+            },
+            error: function(xhr, resp, text) {
+                console.log(xhr, resp, text);
+            }
+        })
+    });
+
+    // Submit of view length
+    $("#slideshowLength").on('input', function(){
+        console.log("View length changed")
+        // send ajax
+        var value = parseInt($('#slideshowLength').val())
+        var formData = JSON.stringify( { "length": value} )
+        console.log(formData)
+        $.ajax({
+            url: 'api/v1/settings/length', // url where to submit the request
             type : "PATCH", // type of action POST || GET
             contentType: 'application/json;charset=UTF-8',
             data : formData,
