@@ -65,17 +65,23 @@ class RetroFrame():
 
     def load_images(self,dirpath):
         """ Load images from given directory"""
-        with os.scandir(dirpath) as entries:
-            for entry in entries:
-                if entry.is_file():
-                    self.sources.append(ImageSource(os.path.join(dirpath,entry.name), DISPLAY_WIDTH, DISPLAY_HEIGTH))
+        if os.path.exists(dirpath):
+            with os.scandir(dirpath) as entries:
+                for entry in entries:
+                    if entry.is_file():
+                        self.sources.append(ImageSource(os.path.join(dirpath,entry.name), DISPLAY_WIDTH, DISPLAY_HEIGTH))
+        else:
+            print("Warning. Non-existing directory:",dirpath)
 
     def load_animations(self, dirpath):
         """ Load animations (gifs) from given directory"""
-        with os.scandir(dirpath) as entries:
-            for entry in entries:
-                if entry.is_file():
-                    self.sources.append(AnimationSource(os.path.join(dirpath,entry.name), DISPLAY_WIDTH, DISPLAY_HEIGTH))
+        if os.path.exists(dirpath):
+            with os.scandir(dirpath) as entries:
+                for entry in entries:
+                    if entry.is_file():
+                        self.sources.append(AnimationSource(os.path.join(dirpath,entry.name), DISPLAY_WIDTH, DISPLAY_HEIGTH))
+        else:
+            print("Warning. Non-existing directory:",dirpath)
 
     def load_sprites(self, dirpath):
         """ Load sprites from given directory"""
@@ -87,10 +93,13 @@ class RetroFrame():
 
     def load_videos(self,dirpath):
         """ Load videos from given directory"""
-        with os.scandir(dirpath) as entries:
-            for entry in entries:
-                if entry.is_file():
-                    self.sources.append(VideoSource(os.path.join(dirpath,entry.name), DISPLAY_WIDTH, DISPLAY_HEIGTH))    
+        if os.path.exists(dirpath):
+            with os.scandir(dirpath) as entries:
+                for entry in entries:
+                    if entry.is_file():
+                        self.sources.append(VideoSource(os.path.join(dirpath,entry.name), DISPLAY_WIDTH, DISPLAY_HEIGTH))
+        else:
+            print("Warning. Non-existing directory:",dirpath)
 
     def load_youtube_videos(self, urls):
         """ Load YouTube videos from the given array of urls"""
@@ -254,8 +263,8 @@ class RetroFrame():
         requested_fps = 0
        
         while True:
-            # Verify if resources are fully loaded
-            if self.all_resources_loaded() or self.sources.__len__() > 0:
+            # Verify if any resources are loaded
+            if self.sources.__len__() > 0:
                 # Update game logic, objects and data structures here using dt
                 for source in self.sources:
                     source.update(dt)
