@@ -191,6 +191,33 @@ $(document).ready(function(){
             }
         })
     });
+
+    // Upload image
+    $("#upload-image-submit").on('click', function(event){
+        event.preventDefault();
+        var form = $('#uploadImageForm')[0]
+        var formData = new FormData(form);
+        var call = "api/v1/sources/upload"
+        $.ajax({
+            url: call, // url where to submit the request
+            type : "POST",
+            contentType: false,
+            enctype: 'multipart/form-data',
+            processData: false,
+            cache: false,
+            data : formData,
+            success : function(result) {
+                console.log(result);
+                alert("Success! Content uploaded")
+                $('#uploadImageForm')[0].reset();
+            },
+            error: function(xhr, resp, text) {
+                alert("Failure! Failed to upload")
+                console.log(xhr, resp, text);
+                $('#uploadImageForm')[0].reset();
+            }
+        })
+    });
 });
 
 function getFormData($form)

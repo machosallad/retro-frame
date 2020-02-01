@@ -5,10 +5,16 @@ HTML and REST server for the retro-frame.
 
 # Imports
 from flask import Flask, render_template, request, jsonify
+from werkzeug.utils import secure_filename
 from source.abstract import SourceType
 from app import RetroFrame
+import os
 import json
 import threading
+
+# Defines 
+UPLOAD_FOLDER = "sources/images/"
+ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg', 'gif'])
 
 # Class declarations
 class RetroFrameHttpServer(threading.Thread):
@@ -17,9 +23,14 @@ class RetroFrameHttpServer(threading.Thread):
         self.app_handle = handle
         # Can setup other things before thread starts
 
+    def allowed_file(self, filename):
+        return '.' in filename and \
+            filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
     def run(self):
         print("HTTP server is starting")
         app = Flask(__name__)
+        app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
         @app.route('/')
         def index():
@@ -137,5 +148,24 @@ class RetroFrameHttpServer(threading.Thread):
                         return 'Failed to load content', 500
                 else:
                     return 'Unsupported content-type', 400
+
+        @app.route('/api/v1/sources/upload', methods=['GET', 'POST'])
+        def file_upload():
+            print("Upload file request!")
+            if request.method == 'POST':
+                # check if the post request has the file part
+                if 'file' not in request.files:
+                    return 'No file part in request!', 500
+                file = request.files['file']
+                # if user does not select file, browser also
+                # submit an empty part without filename
+                if file.filename == '':
+                    return 'No file selected!', 500
+                if file and self.allowed_file(file.filename):
+                    filename = secure_filename(file.filename)
+                    file_path=os.path.join(app.config['UPLOAD_FOLDER'], filename)
+                    file.save(file_path)
+                    self.app_handle.rest_refresh_sources("images")
+                    return 'Content uploaded', 200
 
         app.run(host="0.0.0.0",threaded=True)

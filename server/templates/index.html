@@ -152,23 +152,13 @@
                         </div> <!-- END first row-->
                         <div class="row">
                             <div class="col">
-                                <h3>Videos</h3>
-                                <form>
-                                    <div class="form-group">
-                                        <label for="uploadVideoForm">Upload a video to the frame</label>
-                                        <input type="file" class="form-control-file" id="uploadVideoForm">
-                                    </div>
-                                    <button type="submit" class="btn btn-primary mb-2">Upload</button>
-                                </form>
-                            </div>
-                            <div class="col">
                                 <h3>Images</h3>
-                                <form>
+                                <form enctype="multipart/form-data" id="uploadImageForm">
                                     <div class="form-group">
                                         <label for="uploadImageForm">Upload an image to the frame</label>
-                                        <input type="file" class="form-control-file" id="uploadImageForm">
+                                        <input type="file" name=file class="form-control-file" id="uploadImageFormInput">
                                     </div>
-                                    <button type="submit" class="btn btn-primary mb-2">Upload</button>
+                                    <button type="submit" id="upload-image-submit" class="btn btn-primary mb-2">Upload</button>
                                 </form>
                             </div>
 
