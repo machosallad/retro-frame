@@ -11,10 +11,12 @@ from source.abstract import AbstractSource, SourceType
 
 class ClockSource(AbstractSource):
     def __init__(self, width=16, height=16):
+        """Init the class"""
         super().__init__(width, height)
         self._type = SourceType.clock
         self.fps = 2
 
+        # Prepare 0-9 represented as arrays
         self.zero = [   [0,1,1,1,0],
                         [1,0,0,0,1],
                         [1,0,0,1,1],
@@ -95,10 +97,8 @@ class ClockSource(AbstractSource):
                         [1,0,0,0,1],
                         [0,1,1,1,0]]
 
-    def load(self, filename):
-        pass
-
     def update(self, dt):
+        """Update the source. Checks current time and refreshes the internal buffer"""
 
         now = datetime.datetime.now().time()
         time_array = now.strftime("%H:%M:%S").split(":")
@@ -112,6 +112,7 @@ class ClockSource(AbstractSource):
         self._buffer = self.__construct_buffer(upper_h,lower_h,upper_m,lower_m)
         
     def __get_number_array(self, number):
+        """Get a reference to the array which represents number"""
         if number == 1:
             return self.one
         if number == 2:
@@ -134,6 +135,7 @@ class ClockSource(AbstractSource):
             return self.zero
 
     def __construct_buffer(self, upper_h,lower_h,upper_m,lower_m):
+        """ Given the provided arguments, construct the display buffer and return it"""
         tmp_buffer = np.zeros((self.height, self.width, 3), dtype=np.uint8)
         number = None
         rgb = (255, 255, 255)
