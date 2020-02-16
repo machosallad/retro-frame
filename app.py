@@ -227,7 +227,7 @@ class RetroFrame():
         self.load_threads = []
         self.view_length = 15
         self.mode = ViewMode.random
-        self.allowed_content_dict = {SourceType.image:True, SourceType.video:True, SourceType.sprite:False, SourceType.animation:True, SourceType.giphy:True, SourceType.youtube:True}
+        self.allowed_content_dict = {SourceType.image:True, SourceType.video:True, SourceType.sprite:False, SourceType.animation:True, SourceType.giphy:True, SourceType.youtube:True, SourceType.clock:True}
         self.slideshow_request_pause = False
         self.slideshow_request_next = False
         self.slideshow_request_previous = False

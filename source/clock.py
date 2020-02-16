@@ -12,10 +12,8 @@ from source.abstract import AbstractSource, SourceType
 class ClockSource(AbstractSource):
     def __init__(self, width=16, height=16):
         super().__init__(width, height)
-        self._type = SourceType.image
+        self._type = SourceType.clock
         self.fps = 2
-        self.rows = 7
-        self.columns = 5
 
         self.zero = [   [0,1,1,1,0],
                         [1,0,0,0,1],
@@ -25,35 +23,35 @@ class ClockSource(AbstractSource):
                         [1,0,0,0,1],
                         [0,1,1,1,0]]
         
-        self.one = [    [0,1,1,0,0],
-                        [0,0,1,0,0],
+        self.one = [    [0,0,1,0,0],
+                        [0,1,1,0,0],
                         [0,0,1,0,0],
                         [0,0,1,0,0],
                         [0,0,1,0,0],
                         [0,0,1,0,0],
                         [1,1,1,1,1]]
 
-        self.two = [    [1,1,1,1,0],
+        self.two = [    [0,1,1,1,0],
+                        [1,0,0,0,1],
                         [0,0,0,0,1],
-                        [0,0,0,0,1],
-                        [0,1,1,1,1],
-                        [1,0,0,0,0],
-                        [1,0,0,0,0],
+                        [0,0,0,1,0],
+                        [0,0,1,0,0],
+                        [0,1,0,0,0],
                         [1,1,1,1,1]]
 
         self.three = [  [0,1,1,1,0],
-                        [0,0,0,0,1],
+                        [1,0,0,0,1],
                         [0,0,0,0,1],
                         [0,1,1,1,0],
                         [0,0,0,0,1],
-                        [0,0,0,0,1],
+                        [1,0,0,0,1],
                         [0,1,1,1,0]]
 
-        self.four = [   [0,0,0,1,1],
-                        [0,0,1,0,1],
+        self.four = [   [0,1,0,0,1],
                         [0,1,0,0,1],
                         [1,0,0,0,1],
                         [1,1,1,1,1],
+                        [0,0,0,0,1],
                         [0,0,0,0,1],
                         [0,0,0,0,1]]
         
@@ -62,8 +60,8 @@ class ClockSource(AbstractSource):
                         [1,0,0,0,0],
                         [1,1,1,1,0],
                         [0,0,0,0,1],
-                        [0,0,0,0,1],
-                        [1,1,1,1,0]]
+                        [1,0,0,0,1],
+                        [0,1,1,1,0]]
         
         self.six = [    [0,1,1,1,0],
                         [1,0,0,0,0],
@@ -75,7 +73,7 @@ class ClockSource(AbstractSource):
         
         self.seven = [  [1,1,1,1,1],
                         [0,0,0,0,1],
-                        [0,0,0,1,0],
+                        [0,0,0,0,1],
                         [0,0,0,1,0],
                         [0,0,1,0,0],
                         [0,0,1,0,0],
@@ -94,16 +92,11 @@ class ClockSource(AbstractSource):
                         [1,0,0,0,1],
                         [0,1,1,1,0],
                         [0,0,0,0,1],
-                        [0,0,0,0,1],
+                        [1,0,0,0,1],
                         [0,1,1,1,0]]
 
     def load(self, filename):
-        im = Image.open(filename)
-
-        im = ImageHelper.convert_any_to_rgb(im)
-        im = ImageHelper.resize_image(im, (self.width, self.height))
-
-        self._buffer = np.array(im)
+        pass
 
     def update(self, dt):
 
@@ -116,7 +109,7 @@ class ClockSource(AbstractSource):
         upper_m = int(time_array[1][0])
         lower_m = int(time_array[1][1])
 
-        self.construct(upper_h,lower_h,upper_m,lower_m)
+        self._buffer = self.__construct_buffer(upper_h,lower_h,upper_m,lower_m)
         
     def __get_number_array(self, number):
         if number == 1:
@@ -140,47 +133,35 @@ class ClockSource(AbstractSource):
         else:
             return self.zero
 
-    def construct(self, upper_h,lower_h,upper_m,lower_m):
-        tmp = np.zeros((self.height, self.width, 3), dtype=np.uint8)
+    def __construct_buffer(self, upper_h,lower_h,upper_m,lower_m):
+        tmp_buffer = np.zeros((self.height, self.width, 3), dtype=np.uint8)
+        number = None
+        rgb = (255, 255, 255)
+        column_origin = 5
+        row_origin = 0
+        margin = 1
 
-        hh = self.__get_number_array(upper_h)
-        h = self.__get_number_array(lower_h)
-        mm = self.__get_number_array(upper_m)
-        m = self.__get_number_array(lower_m)
-
-        r = 255
-        g = 255
-        b = 255
-
-        x_origin = 5
-        y_origin = 0
-
-        x_offset = x_origin + 0
-        y_offset = y_origin + 0
-        for x in range(self.columns):
-            for y in range(self.rows):
-                if hh[y][x] == 1:
-                    tmp[y + y_offset, x + x_offset] = (r,g,b)
-
-        x_offset = x_origin + self.columns + 1
-        y_offset = y_origin + 0
-        for x in range(self.columns):
-            for y in range(self.rows):
-                if h[y][x] == 1:
-                    tmp[y + y_offset, x + x_offset] = (r,g,b)
+        for position in range(4):
+            if position == 0:
+                number = self.__get_number_array(upper_h)
+                column_offset = column_origin + 0
+                row_offset = row_origin + 0
+            if position == 1:
+                number = self.__get_number_array(lower_h)
+                column_offset = column_origin + len(number[0]) + margin
+                row_offset = row_origin + 0
+            if position == 2:
+                number = self.__get_number_array(upper_m)
+                column_offset = column_origin + 0
+                row_offset = row_origin + 9
+            if position == 3:
+                number = self.__get_number_array(lower_m)
+                column_offset = column_origin + len(number[0]) + margin
+                row_offset = row_origin + len(number) + 2
         
-        x_offset = x_origin + 0
-        y_offset = y_origin + 9
-        for x in range(self.columns):
-            for y in range(self.rows):
-                if mm[y][x] == 1:
-                    tmp[y + y_offset, x + x_offset] = (r,g,b)
+            for column in range(len(number[0])):
+                for row in range(len(number)):
+                    if number[row][column] == 1:
+                        tmp_buffer[row + row_offset, column + column_offset] = rgb
 
-        x_offset = x_origin + self.columns + 1
-        y_offset = y_origin + self.rows + 2
-        for x in range(self.columns):
-            for y in range(self.rows):
-                if m[y][x] == 1:
-                    tmp[y + y_offset, x + x_offset] = (r,g,b)
-
-        self._buffer = tmp
+        return tmp_buffer
