@@ -13,6 +13,7 @@ class SourceType(Enum):
     video = 4
     giphy = 5
     youtube = 6
+    clock = 7
 
 class AbstractSource(abc.ABC):
     def __init__(self,width=16, height=16):

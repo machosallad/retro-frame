@@ -29,6 +29,7 @@ from source.image import ImageSource
 from source.sprite import SpriteSource
 from source.video import VideoSource
 from source.abstract import SourceType
+from source.clock import ClockSource
 
 # Global variables
 DISPLAY_WIDTH = 16
@@ -226,7 +227,7 @@ class RetroFrame():
         self.load_threads = []
         self.view_length = 15
         self.mode = ViewMode.random
-        self.allowed_content_dict = {SourceType.image:True, SourceType.video:True, SourceType.sprite:False, SourceType.animation:True, SourceType.giphy:True, SourceType.youtube:True}
+        self.allowed_content_dict = {SourceType.image:True, SourceType.video:True, SourceType.sprite:False, SourceType.animation:True, SourceType.giphy:True, SourceType.youtube:True, SourceType.clock:True}
         self.slideshow_request_pause = False
         self.slideshow_request_next = False
         self.slideshow_request_previous = False
@@ -243,6 +244,8 @@ class RetroFrame():
         self.load_images(IMAGE_DIRECTORY)
         self.load_animations(ANIMATION_DIRECTORY)
         #self.load_sprites(SPRITE_DIRECTORY)
+
+        self.sources.append(ClockSource())
         
         # Create loader threads the heavier resources
         self.load_threads.append(threading.Thread(target=self.load_videos,args=(VIDEO_DIRECTORY,)))
